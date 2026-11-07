@@ -1,0 +1,15 @@
+# starts the system on boot, copy to /etc/systemd/system/
+[Unit]
+Description=DriveSafe driver monitoring
+After=network.target sound.target
+
+[Service]
+User=pi
+WorkingDirectory=/home/pi/Repo/edge
+EnvironmentFile=/home/pi/dms.env
+ExecStart=/home/pi/dms-venv/bin/python main.py
+Restart=always
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target

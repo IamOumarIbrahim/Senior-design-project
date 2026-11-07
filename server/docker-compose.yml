@@ -1,0 +1,23 @@
+# local copy of the server with postgres, the free host gives its own database
+# change the password before using this anywhere real
+services:
+  db:
+    image: postgres:16
+    environment:
+      POSTGRES_USER: dms
+      POSTGRES_PASSWORD: change_me
+      POSTGRES_DB: dms
+    volumes:
+      - dbdata:/var/lib/postgresql/data
+  api:
+    build:
+      context: ..
+      dockerfile: server/Dockerfile
+    environment:
+      DATABASE_URL: postgresql://dms:change_me@db:5432/dms
+    ports:
+      - "8000:8000"
+    depends_on:
+      - db
+volumes:
+  dbdata:

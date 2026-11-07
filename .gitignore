@@ -1,0 +1,16 @@
+__pycache__/
+*.pyc
+data/
+runs/
+*.db
+*.db-wal
+*.db-shm
+dashboard/node_modules/
+dashboard/dist/
+server/server.db
+recordings/
+frames/
+*.pem
+.env
+*.dll
+*.so

@@ -1,0 +1,343 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>DriveSafe Tablet</title>
+<script src="icons.js"></script>
+<style>
+  :root { --bg:#f6f8fb; --panel:#fff; --ink:#1b2430; --muted:#6b7686; --line:#e8edf3; --soft:#eef1f5;
+          --blue:#2f80ed; --blueBg:#eaf2fe; --orange:#f5a524; --orangeBg:#fff4e2; --purple:#7b61ff; --purpleBg:#f0edff;
+          --red:#eb5757; --redBg:#fdecec; --green:#27ae60; --greenBg:#e6f6ec; --teal:#22a39a; --tealBg:#e4f6f4; }
+  body.dark { --bg:#0f141b; --panel:#171e27; --ink:#e9eef5; --muted:#8c98a8; --line:#253141; --soft:#1f2834;
+          --blueBg:#162a45; --orangeBg:#33270f; --purpleBg:#231f3f; --redBg:#3a1b1b; --greenBg:#13301f; --tealBg:#10302d; }
+  * { box-sizing:border-box; margin:0; padding:0; }
+  html,body { width:1024px; height:600px; overflow:hidden; }
+  body { background:var(--bg); color:var(--ink); font-family:"Inter","Segoe UI",system-ui,sans-serif; }
+  .top { height:54px; display:flex; align-items:center; justify-content:space-between; padding:0 20px; background:var(--panel); border-bottom:1px solid var(--line); }
+  .brand { display:flex; gap:10px; align-items:center; font-weight:700; font-size:17px; }
+  .brand .logo { width:34px; height:34px; border-radius:50%; background:var(--blueBg); display:flex; align-items:center; justify-content:center; }
+  .brand small { font-weight:400; color:var(--muted); font-size:14px; margin-left:8px; }
+  .chips { display:flex; gap:10px; }
+  .chip { display:flex; gap:7px; align-items:center; font-size:13px; color:var(--muted); background:var(--soft); border-radius:18px; padding:6px 12px; }
+  .main { display:grid; grid-template-columns:1fr 330px; gap:14px; padding:14px 18px; height:546px; }
+  .one { display:flex; align-items:center; justify-content:center; height:546px; }
+  .card { background:var(--panel); border:1px solid var(--line); border-radius:16px; padding:16px 18px; }
+  .hero { display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center; }
+  .badge { width:200px; height:200px; border-radius:50%; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:6px; }
+  .badge .t { font-size:34px; font-weight:700; }
+  .badge .s { font-size:13px; color:var(--muted); }
+  .msg { margin-top:18px; font-size:19px; line-height:1.38; max-width:520px; }
+  .msg .ar { display:block; direction:rtl; color:var(--muted); font-size:18px; margin-top:6px; }
+  .tiers { display:flex; gap:8px; margin-top:16px; align-items:center; font-size:12px; color:var(--muted); }
+  .tiers span { width:64px; height:7px; border-radius:4px; background:var(--soft); }
+  h3 { font-size:14px; font-weight:600; margin-bottom:8px; }
+  h2 { font-size:22px; margin-bottom:6px; }
+  .det { display:flex; gap:10px; align-items:center; padding:8px 0; border-bottom:1px solid var(--line); }
+  .det:last-child { border:none; }
+  .det .t { flex:1; font-size:14px; text-transform:capitalize; } .det .t small { display:block; color:var(--muted); font-size:12px; text-transform:none; }
+  .det .tm { font-size:12px; color:var(--muted); }
+  .side { display:flex; flex-direction:column; gap:12px; }
+  .stat { display:flex; justify-content:space-between; font-size:14px; color:var(--muted); padding:4px 0; }
+  .stat b { color:var(--ink); }
+  .btns { display:flex; gap:10px; margin-top:auto; }
+  .btn { flex:1; text-align:center; padding:14px 0; border-radius:12px; font-size:15px; font-weight:600; border:1px solid var(--line); background:var(--panel); color:var(--ink); cursor:pointer; }
+  .btn.p { background:var(--blue); color:#fff; border:none; }
+  .prog { width:100%; height:8px; background:var(--soft); border-radius:4px; margin:8px 0 4px; overflow:hidden; }
+  .prog i { display:block; height:100%; background:var(--blue); border-radius:4px; }
+  .pad { display:grid; grid-template-columns:repeat(3,84px); gap:10px; justify-content:center; margin-top:14px; }
+  .pad .btn { padding:16px 0; font-size:22px; }
+  .dots { font-size:30px; letter-spacing:14px; height:40px; text-align:center; }
+  .wide { width:560px; }
+  .err { color:var(--red); font-size:14px; margin-top:8px; min-height:18px; text-align:center; }
+  .muted { color:var(--muted); font-size:14px; line-height:1.5; }
+  .choice { display:flex; gap:8px; margin:8px 0 16px; }
+  .choice .btn { padding:12px 0; }
+  .choice .on { background:var(--blue); color:#fff; border:none; }
+  input { width:100%; padding:12px; font-size:16px; border:1px solid var(--line); border-radius:10px; background:var(--panel); color:var(--ink); margin:8px 0 14px; }
+</style>
+</head>
+<body>
+<div class="top">
+  <div class="brand"><div class="logo" id="logo"></div>DriveSafe<small id="drv"></small></div>
+  <div class="chips" id="chips"></div>
+</div>
+<div id="page"></div>
+<script>
+//   Senior Design Project - Edge-Cloud Driver Monitoring (Group 34)
+//        Oumar Mamoun Ibrahim U22200741
+//        Abdullah Jafar Abdelhamid U23101327
+//        Faris Munadhil Ahmed Alagha U23104246
+//        Mohamed Ahmed Saad Khafagy U20101649
+var S = null;
+var pin = "";
+var lang = "en";
+var hours = 7;
+var tired = 2;
+var last_key = "";
+var C = { blue: "#2f80ed", orange: "#f5a524", purple: "#7b61ff", red: "#eb5757", green: "#27ae60", teal: "#22a39a", muted: "#8c98a8" };
+
+document.getElementById("logo").innerHTML = icon("car", 20, C.blue, 2);
+
+function send(body) {
+  fetch("/api/action", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(body)
+  });
+}
+
+// dark theme after sunset
+function set_theme() {
+  var h = new Date().getHours();
+  if (h >= 18 || h < 6) {
+    document.body.classList.add("dark");
+  } else {
+    document.body.classList.remove("dark");
+  }
+}
+
+function clock() {
+  var d = new Date();
+  var m = d.getMinutes();
+  if (m < 10) {
+    m = "0" + m;
+  }
+  return d.getHours() + ":" + m;
+}
+
+function top_bar() {
+  document.getElementById("drv").textContent = S.driver;
+  var h = '<div class="chip">' + icon("cam", 15, C.green, 2) + "Camera " + S.camera_pct + "%</div>";
+  h = h + '<div class="chip">' + icon("cloud", 15, C.muted, 2) + "Sync after trip</div>";
+  h = h + '<div class="chip" style="color:var(--ink);font-weight:600">' + clock() + "</div>";
+  document.getElementById("chips").innerHTML = h;
+}
+
+function on_if(yes) {
+  if (yes) {
+    return "on";
+  }
+  return "";
+}
+
+function pin_page() {
+  var h = '<div class="one"><div class="card wide"><h2>Enter your PIN</h2>';
+  h = h + '<div class="dots">';
+  for (var i = 0; i < pin.length; i++) {
+    h = h + "&#9679;";
+  }
+  h = h + "</div><div class=\"pad\">";
+  var keys = ["1", "2", "3", "4", "5", "6", "7", "8", "9", "C", "0", "OK"];
+  for (var k = 0; k < keys.length; k++) {
+    h = h + '<div class="btn" onclick="press(\'' + keys[k] + "')\">" + keys[k] + "</div>";
+  }
+  h = h + '</div><div class="err">' + S.error + "</div></div></div>";
+  return h;
+}
+
+function press(k) {
+  if (k == "C") {
+    pin = "";
+  } else if (k == "OK") {
+    if (pin.length == 4) {
+      send({ type: "pin", pin: pin });
+      pin = "";
+    }
+  } else if (pin.length < 4) {
+    pin = pin + k;
+  }
+  last_key = "";
+  draw();
+}
+
+function new_page() {
+  var h = '<div class="one"><div class="card wide"><h2>New driver</h2><div class="muted">This PIN is new. Please tell us your name.</div>';
+  h = h + '<input id="name" placeholder="Name">';
+  h = h + '<h3>Voice language</h3><div class="choice">';
+  h = h + '<div class="btn ' + on_if(lang == "en") + '" onclick="pick_lang(\'en\')">English</div>';
+  h = h + '<div class="btn ' + on_if(lang == "ar") + '" onclick="pick_lang(\'ar\')">العربية</div></div>';
+  h = h + '<div class="btns"><div class="btn p" onclick="save_new()">Continue</div></div></div></div>';
+  return h;
+}
+
+function pick_lang(x) {
+  var box = document.getElementById("name");
+  var name = box.value;
+  lang = x;
+  last_key = "";
+  draw();
+  document.getElementById("name").value = name;
+}
+
+function save_new() {
+  send({ type: "new_driver", name: document.getElementById("name").value, language: lang });
+}
+
+function pre_page() {
+  var h = '<div class="one"><div class="card wide"><h2>Before you drive</h2>';
+  h = h + "<h3>How many hours did you sleep?</h3><div class=\"choice\">";
+  var opts = [4, 6, 8];
+  for (var i = 0; i < opts.length; i++) {
+    h = h + '<div class="btn ' + on_if(hours == opts[i]) + '" onclick="pick_hours(' + opts[i] + ')">' + opts[i] + " h</div>";
+  }
+  h = h + "</div><h3>How tired do you feel?</h3><div class=\"choice\">";
+  for (var n = 1; n <= 5; n++) {
+    h = h + '<div class="btn ' + on_if(tired == n) + '" onclick="pick_tired(' + n + ')">' + n + "</div>";
+  }
+  h = h + '</div><div class="btns"><div class="btn p" onclick="send_pre()">Continue</div></div></div></div>';
+  return h;
+}
+
+function pick_hours(x) {
+  hours = x;
+  last_key = "";
+  draw();
+}
+
+function pick_tired(x) {
+  tired = x;
+  last_key = "";
+  draw();
+}
+
+function send_pre() {
+  send({ type: "pretrip", hours: hours, tired: tired });
+}
+
+function cal_ask_page() {
+  var h = '<div class="one"><div class="card wide"><h2>New driver setup</h2>';
+  h = h + '<div class="muted">We need 20 seconds of you sitting normally. This sets alert levels that fit you, so you get fewer false alarms.</div>';
+  h = h + '<div class="err">' + S.error + '</div><div class="btns" style="margin-top:16px"><div class="btn" onclick="send({type:\'skip_calibrate\'})">Skip</div>';
+  h = h + '<div class="btn p" onclick="send({type:\'calibrate\'})">Start</div></div></div></div>';
+  return h;
+}
+
+function cal_page() {
+  var c = S.calib;
+  var part = Math.round(100 * c.seconds / c.total);
+  var h = '<div class="main"><div class="card hero"><div class="badge" style="border:12px solid var(--blueBg);border-top-color:' + C.blue + ";border-right-color:" + C.blue + '">';
+  h = h + '<div class="t" style="color:' + C.blue + ';font-size:48px">' + c.seconds + ' s</div><div class="s">of ' + c.total + " s</div></div>";
+  h = h + '<div class="msg">Sit normally and look at the road.<br><span style="color:var(--muted);font-size:16px">We are learning your neutral face to set your alert levels.</span>';
+  h = h + '<span class="ar">اجلس بشكل طبيعي وانظر إلى الطريق</span></div></div>';
+  h = h + '<div class="side"><div class="card"><h3>New driver setup</h3><div class="stat">Driver<b>' + S.driver + "</b></div>";
+  h = h + '<div class="stat">Frames collected<b>' + c.frames + '</b></div><div class="prog"><i style="width:' + part + '%"></i></div>';
+  h = h + '<div class="stat">Detections at 0.05<b>' + c.seen + "</b></div></div>";
+  h = h + '<div class="card muted"><h3 style="color:var(--ink)">How it works</h3>Your cutoff per class becomes the 99th percentile of your neutral scores plus 0.05, kept between the default and 0.85. Too many detections? Defaults are kept and you are asked to repeat.</div></div></div>';
+  return h;
+}
+
+function badge() {
+  var col = C.green;
+  var bg = "--greenBg";
+  var ic = "shield";
+  var sub = "No active alerts";
+  if (S.status == "Drowsy") {
+    col = C.orange;
+    bg = "--orangeBg";
+    ic = "zzz";
+  }
+  if (S.status == "Distracted") {
+    col = C.purple;
+    bg = "--purpleBg";
+    ic = "phone";
+  }
+  if (S.tier == 3) {
+    col = C.red;
+    bg = "--redBg";
+  }
+  if (S.tier > 0) {
+    sub = "Tier " + S.tier;
+  }
+  var h = '<div class="badge" style="background:var(' + bg + ");border:12px solid " + col + '">' + icon(ic, 40, col, 2.2);
+  h = h + '<div class="t" style="color:' + col + '">' + S.status + '</div><div class="s">' + sub + "</div></div>";
+  return h;
+}
+
+function drive_page() {
+  var msg = S.message;
+  var ar = S.message_ar;
+  if (msg == "") {
+    msg = "All good. Keep your eyes on the road.";
+    ar = "كل شيء على ما يرام";
+  }
+  var h = '<div class="main"><div class="card hero">' + badge();
+  h = h + '<div class="msg">' + msg + '<span class="ar">' + ar + "</span></div>";
+  h = h + '<div class="tiers">Tier ';
+  for (var i = 1; i <= 3; i++) {
+    if (S.tier >= i) {
+      h = h + '<span style="background:' + C.orange + '"></span>';
+    } else {
+      h = h + "<span></span>";
+    }
+  }
+  h = h + '</div></div><div class="side"><div class="card"><h3>Recent detections</h3>';
+  if (S.recent.length == 0) {
+    h = h + '<div class="muted">Nothing yet</div>';
+  }
+  for (var k = 0; k < S.recent.length; k++) {
+    var r = S.recent[k];
+    h = h + '<div class="det"><div class="t">' + r.name + "<small>" + r.text + '</small></div><div class="tm">' + r.clock + "</div></div>";
+  }
+  var next = S.break_min - S.drive_min;
+  if (next < 0) {
+    next = 0;
+  }
+  h = h + '</div><div class="card"><h3>This trip</h3><div class="stat">Drive time<b>' + S.drive_min + " min</b></div>";
+  h = h + '<div class="stat">Alerts<b>' + S.alerts + "</b></div>";
+  h = h + '<div class="stat">Next break suggested<b>in ' + next + " min</b></div>";
+  if (S.stop != null) {
+    h = h + '<div class="stat">' + S.stop.kind + "<b>" + S.stop.name + " · " + S.stop.km + " km</b></div>";
+  }
+  h = h + '</div><div class="btns"><div class="btn p" onclick="send({type:\'end_trip\'})">End trip</div></div></div></div>';
+  return h;
+}
+
+function end_page() {
+  return '<div class="one"><div class="card wide"><h2>Trip finished</h2><div class="muted">Your events are being uploaded. No video leaves the car.</div></div></div>';
+}
+
+function draw() {
+  if (S != null) {
+    top_bar();
+    var key = S.screen + S.error;
+    var out = "";
+    if (S.screen == "pin") {
+      out = pin_page();
+    } else if (S.screen == "new_driver") {
+      out = new_page();
+    } else if (S.screen == "pretrip") {
+      out = pre_page();
+    } else if (S.screen == "calibrate") {
+      out = cal_ask_page();
+    } else if (S.screen == "calibrating") {
+      out = cal_page();
+      key = key + S.calib.frames;
+    } else if (S.screen == "drive") {
+      out = drive_page();
+      key = key + S.status + S.tier + S.message + S.alerts + S.drive_min + JSON.stringify(S.stop);
+    } else {
+      out = end_page();
+    }
+    // only redraw when something changed or typing and pressing would break
+    if (key != last_key) {
+      last_key = key;
+      document.getElementById("page").innerHTML = out;
+    }
+  }
+}
+
+function refresh() {
+  fetch("/api/state").then(function (res) {
+    return res.json();
+  }).then(function (data) {
+    S = data;
+    set_theme();
+    draw();
+  });
+}
+
+refresh();
+setInterval(refresh, 500);
+</script>
+</body>
+</html>

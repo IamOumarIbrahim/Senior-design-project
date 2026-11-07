@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>DriveSafe location</title>
+<style>
+  body { font-family: "Segoe UI", system-ui, sans-serif; background: #f6f8fb; color: #1b2430; margin: 0; padding: 24px; text-align: center; }
+  button { font-size: 18px; padding: 14px 24px; border: none; border-radius: 12px; background: #2f80ed; color: #fff; }
+  p { color: #6b7686; }
+</style>
+</head>
+<body>
+<h2>Share location once</h2>
+<p>Used one time to find a rest stop. It is not stored.</p>
+<button onclick="send()">Send my location</button>
+<p id="out"></p>
+<script>
+//   Senior Design Project - Edge-Cloud Driver Monitoring (Group 34)
+//        Oumar Mamoun Ibrahim U22200741
+//        Abdullah Jafar Abdelhamid U23101327
+//        Faris Munadhil Ahmed Alagha U23104246
+//        Mohamed Ahmed Saad Khafagy U20101649
+// browsers only give the location on https so the pi needs a certificate for this
+function send() {
+  var out = document.getElementById("out");
+  if (navigator.geolocation) {
+    navigator.geolocation.getCurrentPosition(function (pos) {
+      var body = { lat: pos.coords.latitude, lon: pos.coords.longitude };
+      fetch("/api/location", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(body)
+      }).then(function () {
+        out.textContent = "Sent.";
+      });
+    }, function () {
+      out.textContent = "Location is not allowed.";
+    });
+  } else {
+    out.textContent = "This phone has no location.";
+  }
+}
+</script>
+</body>
+</html>

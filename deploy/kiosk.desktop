@@ -1,0 +1,5 @@
+# copy to ~/.config/autostart/ so the display opens full screen
+[Desktop Entry]
+Type=Application
+Name=DriveSafe display
+Exec=chromium-browser --kiosk --noerrdialogs --disable-infobars http://127.0.0.1:8080

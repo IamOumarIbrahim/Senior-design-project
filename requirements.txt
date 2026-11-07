@@ -1,0 +1,8 @@
+# on the pi
+numpy
+opencv-python-headless
+ultralytics
+flask
+mediapipe
+gpiozero
+lgpio
