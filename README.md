@@ -34,7 +34,7 @@ cd ../edge
 python main.py replay ../data/replay_subject_05.mp4
 ```
 
-The replay has no sound and no display. Events go in `data/events.db`. `make_replay.py` needs the DMD RGB frames, set `DMS_RGB_DIR` to where they are. DMD has its own licence so the frames are not in this repo.
+The light bar packages only install on the Pi, a laptop skips them. The replay has no sound and no display. Events go in `data/events.db`. `make_replay.py` needs the DMD RGB frames, set `DMS_RGB_DIR` to where they are. DMD has its own licence so the frames are not in this repo.
 
 On a laptop with a GPU set `DMS_DEVICE=0`. Dont do this with mediapipe installed on Windows, the two together crash CUDA.
 

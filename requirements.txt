@@ -1,8 +1,8 @@
-# on the pi
+# the last two are only for the light bar so they skip anything that is not a pi
 numpy
 opencv-python-headless
 ultralytics
 flask
 mediapipe
-gpiozero
-lgpio
+gpiozero; platform_machine == "aarch64"
+lgpio; platform_machine == "aarch64"
