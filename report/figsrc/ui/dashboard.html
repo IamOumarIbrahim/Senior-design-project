@@ -1,0 +1,138 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>DriveSafe Dashboard</title>
+<script src="icons.js"></script>
+<style>
+  :root { --bg:#f6f8fb; --panel:#fff; --ink:#1b2430; --muted:#6b7686; --line:#e8edf3;
+          --blue:#2f80ed; --blueBg:#eaf2fe; --orange:#f5a524; --orangeBg:#fff4e2; --purple:#7b61ff; --purpleBg:#f0edff;
+          --red:#eb5757; --redBg:#fdecec; --green:#27ae60; --teal:#22a39a; --tealBg:#e4f6f4; }
+  * { box-sizing:border-box; margin:0; padding:0; }
+  html,body { width:1536px; height:1000px; overflow:hidden; background:#e9edf2; }
+  body { font-family:"Inter","Segoe UI",system-ui,sans-serif; color:var(--ink); padding:6px; }
+  .win { width:100%; height:100%; background:var(--bg); border-radius:14px; overflow:hidden; display:flex; flex-direction:column; box-shadow:0 6px 30px rgba(20,30,50,.12); }
+  .chrome { height:30px; display:flex; gap:8px; align-items:center; padding-left:14px; background:#f1f4f8; border-bottom:1px solid var(--line); }
+  .chrome i { width:12px; height:12px; border-radius:50%; display:inline-block; }
+  .body { flex:1; display:flex; min-height:0; }
+  .nav { width:250px; background:#fff; border-right:1px solid var(--line); padding:22px 14px; display:flex; flex-direction:column; }
+  .brand { display:flex; gap:12px; align-items:center; padding:0 8px 26px; }
+  .brand .logo { width:44px; height:44px; border-radius:50%; background:var(--blueBg); display:flex; align-items:center; justify-content:center; }
+  .brand b { font-size:18px; display:block; } .brand span { font-size:12px; color:var(--muted); }
+  .nav a { display:flex; gap:12px; align-items:center; padding:11px 14px; border-radius:10px; font-size:15px; color:#3b4656; margin-bottom:4px; }
+  .nav a.on { background:var(--blueBg); color:var(--blue); font-weight:600; }
+  .mon { margin-top:auto; border:1px solid var(--line); border-radius:12px; padding:12px 14px; font-size:13px; }
+  .mon small { display:block; color:var(--muted); margin-top:3px; }
+  .main { flex:1; padding:22px 26px; display:flex; flex-direction:column; gap:16px; min-width:0; }
+  .head { display:flex; justify-content:space-between; align-items:flex-start; }
+  .head h1 { font-size:27px; font-weight:700; } .head p { color:var(--muted); margin-top:4px; font-size:15px; }
+  .date { display:flex; gap:10px; align-items:center; border:1px solid var(--line); background:#fff; border-radius:10px; padding:10px 14px; font-size:14px; }
+  .sample { font-size:11px; background:var(--orangeBg); color:#a06200; border-radius:10px; padding:3px 9px; margin-left:10px; vertical-align:middle; font-weight:600; }
+  .kpis { display:grid; grid-template-columns:repeat(4,1fr); gap:14px; }
+  .card { background:var(--panel); border:1px solid var(--line); border-radius:14px; padding:16px 18px; }
+  .k { display:flex; gap:14px; }
+  .k .ic { width:44px; height:44px; border-radius:50%; display:flex; align-items:center; justify-content:center; flex:none; }
+  .k .l { font-size:13px; color:#4a5565; } .k .v { font-size:24px; font-weight:700; margin:5px 0 6px; }
+  .k .d { font-size:12px; color:var(--muted); } .k .d b { color:var(--green); font-weight:600; }
+  .row { display:grid; gap:14px; }
+  h3 { font-size:16px; font-weight:600; margin-bottom:8px; display:flex; justify-content:space-between; align-items:center; }
+  h3 .lg { font-size:12px; font-weight:400; color:var(--muted); display:flex; gap:16px; }
+  h3 .lg i { display:inline-block; width:8px; height:8px; border-radius:50%; margin-right:6px; }
+  h3 a { font-size:12px; color:var(--blue); font-weight:500; }
+  .det { display:flex; gap:12px; align-items:center; padding:9px 0; border-bottom:1px solid var(--line); }
+  .det:last-child { border:none; }
+  .det .ic { width:34px; height:34px; border-radius:50%; display:flex; align-items:center; justify-content:center; flex:none; }
+  .det .t { flex:1; font-size:14px; } .det .t small { display:block; color:var(--muted); font-size:12px; margin-top:2px; }
+  .det .tm { font-size:12px; color:var(--muted); text-align:right; }
+  .tip { display:flex; gap:10px; font-size:13px; line-height:1.4; padding:7px 0; }
+  .tip .ic { width:28px; height:28px; border-radius:8px; display:flex; align-items:center; justify-content:center; flex:none; }
+</style>
+</head>
+<body>
+<div class="win">
+  <div class="chrome"><i style="background:#ff5f57"></i><i style="background:#febc2e"></i><i style="background:#28c840"></i></div>
+  <div class="body">
+    <div class="nav">
+      <div class="brand"><div class="logo" id="logo"></div><div><b>DriveSafe</b><span>Stay alert. Stay safe.</span></div></div>
+      <a class="on" data-i="home">Dashboard</a><a data-i="map">Trips</a><a data-i="bars">Statistics</a><a data-i="bulb">Tips</a><a data-i="shield">Privacy &amp; data</a><a data-i="gear">Settings</a>
+      <div class="mon"><span style="color:var(--green)">●</span> Last upload 21:58<small>Event records only · TLS · no video</small></div>
+    </div>
+    <div class="main">
+      <div class="head"><div><h1>Driving Overview <span class="sample">SAMPLE DATA</span></h1><p>Your driving safety at a glance</p></div>
+        <div class="date" id="date">Week 44 · 26 Oct – 1 Nov 2026</div></div>
+      <div class="kpis" id="kpis"></div>
+      <div class="row" style="grid-template-columns:1.75fr 1fr">
+        <div class="card"><h3>Distraction &amp; Drowsiness Trend <span class="lg"><span><i style="background:var(--blue)"></i>Distraction</span><span><i style="background:var(--orange)"></i>Drowsiness</span></span></h3><svg id="trend" width="100%" height="190" viewBox="0 0 820 190"></svg></div>
+        <div class="card"><h3>Detection Breakdown</h3><svg id="donut" width="100%" height="200" viewBox="0 0 470 200"></svg></div>
+      </div>
+      <div class="row" style="grid-template-columns:1.75fr 1fr; flex:1; min-height:0">
+        <div style="display:flex; flex-direction:column; gap:14px">
+          <div class="card"><h3>Driving Activity Heatmap <span class="lg">alerts per hour of driving · Low <svg width="90" height="10"><defs><linearGradient id="g"><stop offset="0" stop-color="#fff3ea"/><stop offset="1" stop-color="#c62828"/></linearGradient></defs><rect width="90" height="10" rx="2" fill="url(#g)"/></svg> High</span></h3><svg id="heat" width="100%" height="200" viewBox="0 0 820 200"></svg></div>
+          <div class="card"><h3>Last Trip Timeline <a>Sharjah → Dubai · 1 h 52 min</a></h3><svg id="tl" width="100%" height="64" viewBox="0 0 820 64"></svg></div>
+        </div>
+        <div class="card"><h3>Recent Detections <a>View all →</a></h3><div id="dets"></div>
+          <div style="border-top:1px solid var(--line); margin-top:6px; padding-top:8px"><h3 style="font-size:14px">Post-trip tip</h3>
+          <div class="tip"><div class="ic" style="background:var(--orangeBg)" id="tipic"></div><div>Yawning rose after <b>80 min</b> on 4 of 7 trips. <b>Take a break around 90 minutes.</b></div></div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<script>
+const C={blue:'#2f80ed',orange:'#f5a524',purple:'#7b61ff',red:'#eb5757',teal:'#22a39a'};
+document.getElementById('logo').innerHTML=icon('car',24,C.blue,2);
+document.querySelectorAll('.nav a').forEach(a=>a.insertAdjacentHTML('afterbegin',icon(a.dataset.i,20,a.classList.contains('on')?C.blue:'#4a5565')));
+document.getElementById('date').insertAdjacentHTML('afterbegin',icon('cal',18,'#4a5565'));
+document.getElementById('tipic').innerHTML=icon('bulb',16,C.orange);
+const k=[['wheel','#eef1f5','#1b2430','Total Drive Time','9 h 24 m','<b>↑ 12%</b> vs. last week'],
+         ['warn',  '#fdecec',C.red,'Distraction Detections','27','<b>↓ 18%</b> vs. last week'],
+         ['zzz',   '#fff4e2',C.orange,'Drowsiness Detections','41','<b style="color:#eb5757">↑ 9%</b> vs. last week'],
+         ['shield','#eaf2fe',C.blue,'Drive Time Monitored','97.8%','camera blocked 12 min total']];
+document.getElementById('kpis').innerHTML=k.map(x=>`<div class="card k"><div class="ic" style="background:${x[1]}">${icon(x[0],22,x[2],2)}</div><div><div class="l">${x[3]}</div><div class="v">${x[4]}</div><div class="d">${x[5]}</div></div></div>`).join('');
+const NS='http://www.w3.org/2000/svg';
+function el(s,t,a,txt){const e=document.createElementNS(NS,t);for(const q in a)e.setAttribute(q,a[q]);if(txt!==undefined)e.textContent=txt;s.appendChild(e);return e;}
+// deterministic pseudo-random
+let seed=7; const rnd=()=>{seed=(seed*16807)%2147483647;return (seed-1)/2147483646;};
+// trend: alerts per hour over 7 days (per day points, 4 samples/day)
+const tr=document.getElementById('trend'); const x0=40,x1=800,y0=12,y1=160, N=28;
+const days=['Mon','Tue','Wed','Thu','Fri','Sat','Sun'];
+for(let g=0;g<=4;g++){const y=y1-(y1-y0)*g/4; el(tr,'line',{x1:x0,x2:x1,y1:y,y2:y,stroke:'#eef1f5'}); el(tr,'text',{x:x0-10,y:y+4,'font-size':11,fill:'#8a94a3','text-anchor':'end'},g*2);}
+days.forEach((d,i)=>el(tr,'text',{x:x0+(x1-x0)*(i*4+2)/N,y:180,'font-size':11,fill:'#8a94a3','text-anchor':'middle'},d));
+const dis=[],drw=[]; for(let i=0;i<N;i++){dis.push(1.2+1.8*rnd()+(i%4==1?1.6*rnd():0)); drw.push(0.4+0.8*rnd()+(i%4==3?2.6*rnd():0));}
+function smooth(v,col,fill){const pts=v.map((y,i)=>[x0+(x1-x0)*(i+.5)/N, y1-(y1-y0)*y/8]);
+ let d=`M${pts[0][0]},${pts[0][1]}`; for(let i=1;i<pts.length;i++){const p=pts[i-1],q=pts[i],cx=(p[0]+q[0])/2; d+=` C${cx},${p[1]} ${cx},${q[1]} ${q[0]},${q[1]}`;}
+ if(fill) el(tr,'path',{d:d+` L${pts[pts.length-1][0]},${y1} L${pts[0][0]},${y1} Z`,fill:col,opacity:.08});
+ el(tr,'path',{d,fill:'none',stroke:col,'stroke-width':2.4}); pts.forEach(p=>el(tr,'circle',{cx:p[0],cy:p[1],r:2.6,fill:'#fff',stroke:col,'stroke-width':1.6}));}
+smooth(dis,C.blue,true); smooth(drw,C.orange,true);
+// donut
+const dn=document.getElementById('donut'); const parts=[[41,C.orange,'Yawning / hand over mouth'],[15,C.purple,'Phone use'],[12,C.teal,'Drinking'],[4,'#9aa5b4','Camera blocked']];
+const tot=parts.reduce((a,b)=>a+b[0],0); let a0=-Math.PI/2; const cx=100,cy=100,R=86,r=62;
+parts.forEach(p=>{const a1=a0+2*Math.PI*p[0]/tot, la=(a1-a0)>Math.PI?1:0;
+ el(dn,'path',{d:`M${cx+R*Math.cos(a0)} ${cy+R*Math.sin(a0)} A${R} ${R} 0 ${la} 1 ${cx+R*Math.cos(a1)} ${cy+R*Math.sin(a1)} L${cx+r*Math.cos(a1)} ${cy+r*Math.sin(a1)} A${r} ${r} 0 ${la} 0 ${cx+r*Math.cos(a0)} ${cy+r*Math.sin(a0)} Z`,fill:p[1],stroke:'#fff','stroke-width':2}); a0=a1;});
+el(dn,'text',{x:cx,y:cy+4,'font-size':30,'font-weight':700,'text-anchor':'middle',fill:'#1b2430'},tot);
+el(dn,'text',{x:cx,y:cy+26,'font-size':12,'text-anchor':'middle',fill:'#6b7686'},'Total detections');
+parts.forEach((p,i)=>{const y=48+i*36; el(dn,'circle',{cx:222,cy:y-4,r:5,fill:p[1]}); el(dn,'text',{x:236,y,'font-size':13,fill:'#3b4656'},p[2]);
+ el(dn,'text',{x:462,y,'font-size':13,fill:'#3b4656','text-anchor':'end'},`${p[0]} (${Math.round(100*p[0]/tot)}%)`);});
+// heatmap weekday x hour (alerts per driving hour)
+const ht=document.getElementById('heat'); const hx0=44,cw=(800-hx0)/24,ch=24;
+const ramp=t=>{const a=[255,243,234],b=[198,40,40];return `rgb(${a.map((v,i)=>Math.round(v+(b[i]-v)*t)).join(',')})`;};
+days.forEach((d,j)=>{el(ht,'text',{x:hx0-8,y:j*ch+ch*0.7+4,'font-size':11,fill:'#8a94a3','text-anchor':'end'},d);
+ for(let h=0;h<24;h++){let base=0.06+0.08*rnd();
+  if(h>=6&&h<=8) base+=0.25+0.3*rnd(); if(h>=17&&h<=19) base+=0.3+0.35*rnd(); if(h>=22||h<=1) base+=0.35+0.3*rnd(); if(j>=5) base*=0.8;
+  el(ht,'rect',{x:hx0+h*cw+1,y:j*ch+4,width:cw-2,height:ch-3,rx:2.5,fill:ramp(Math.min(base,1))});}});
+for(let h=0;h<24;h+=3) el(ht,'text',{x:hx0+h*cw+cw/2,y:7*ch+20,'font-size':11,fill:'#8a94a3','text-anchor':'middle'},String(h).padStart(2,'0')+':00');
+// timeline
+const tl=document.getElementById('tl'); el(tl,'line',{x1:50,x2:800,y1:24,y2:24,stroke:'#e3eaf3','stroke-width':6,'stroke-linecap':'round'});
+el(tl,'circle',{cx:30,cy:24,r:16,fill:'#eef1f5'}); const g=el(tl,'g',{transform:'translate(20,14)'}); g.innerHTML=icon('car',20,'#1b2430',2);
+const ev=[[12,C.purple],[22,C.teal],[38,C.orange],[47,C.purple],[64,C.teal],[71,C.orange],[83,C.orange],[85,C.orange],[90,C.orange],[96,C.orange],[101,C.orange],[104,C.orange],[109,C.orange]];
+ev.forEach(e=>el(tl,'circle',{cx:50+750*e[0]/112,cy:24,r:5.5,fill:e[1]}));
+el(tl,'rect',{x:50+750*90/112,y:8,width:750*22/112,height:32,rx:6,fill:C.orange,opacity:.12});
+[0,15,30,45,60,75,90,105].forEach(m=>el(tl,'text',{x:50+750*m/112,y:56,'font-size':11,fill:'#8a94a3','text-anchor':'middle'},m+' min'));
+// recent detections
+const dets=[['zzz',C.orange,'#fff4e2','Drowsiness','Yawning · 3rd in 5 min','21:46','~2 s'],['mouth',C.orange,'#fff4e2','Drowsiness','Hand over mouth','21:43','~2 s'],
+ ['eye',C.red,'#fdecec','Drowsiness','Eyes closed 1.6 s','21:31','1.6 s'],['phone',C.purple,'#f0edff','Phone Use','Phone held to ear','20:52','~6 s'],
+ ['cup',C.teal,'#e4f6f4','Drinking','Drinking from bottle','20:31','~4 s']];
+document.getElementById('dets').innerHTML=dets.map(d=>`<div class="det"><div class="ic" style="background:${d[2]}">${icon(d[0],18,d[1],2)}</div><div class="t">${d[3]}<small>${d[4]}</small></div><div class="tm">${d[5]}<br>${d[6]}</div></div>`).join('');
+</script>
+</body>
+</html>

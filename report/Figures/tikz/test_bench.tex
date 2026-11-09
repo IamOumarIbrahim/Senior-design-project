@@ -1,0 +1,16 @@
+\begin{tikzpicture}[node distance=6mm and 10mm]
+  \fcard{ps}{sbgray}{\faBolt}{27 W supply}{}
+  \fcard{me}{sbgray}{\faCalculator}{\gls{usb}-C power meter}{right=of ps}
+  \fcard{re}{sbred}{\faToggleOn}{Smart relay, random power cut}{right=of me}
+  \fcard{pi}{sbblue}{\faMicrochip}{Pi 5 + AI HAT+ under test}{right=14mm of re}
+  \fcard{cl}{sbblue}{\faFilm}{Recorded clip as a virtual camera}{above=of pi}
+  \fcard{wi}{sbblue}{\faWifi}{Wi-Fi access point, dropped on demand}{below=of pi}
+  \fcard{la}{sbgreen}{\faLaptop}{Laptop: logs and integrity check}{right=14mm of pi}
+  \draw[farr] (ps) -- (me); \draw[farr] (me) -- (re); \draw[farr] (re) -- (pi);
+  \draw[farr] (cl) -- (pi); \draw[farr, <->] (pi) -- (wi);
+  \draw[farr, <->] (pi) -- node[flab, above]{SSH} (la);
+  \draw[farr, dashed] (la.north) |- ([yshift=15mm]cl.north) -| node[flab, pos=0.25, above]{cut schedule} (re.north);
+  \begin{scope}[on background layer]
+    \node[freg=sbblue, fit=(cl)(wi), label={[freglab]north west:Device under test}] {};
+  \end{scope}
+\end{tikzpicture}

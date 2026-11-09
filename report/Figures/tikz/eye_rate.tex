@@ -1,0 +1,15 @@
+\begin{tikzpicture}
+\begin{axis}[width=0.92\linewidth, height=6.2cm, ybar, bar width=20pt, area legend, ymin=0, ymax=140, enlarge x limits=0.22,
+  symbolic x coords={First rule, New rule (two frames), New rule (three frames)}, xtick=data,
+  ylabel={Eye alarms per hour}, tick label style={font=\footnotesize}, label style={font=\footnotesize},
+  ymajorgrids, grid style={gray!20}, axis x line*=bottom, axis y line*=left,
+  nodes near coords, nodes near coords style={font=\footnotesize, /pgf/number format/fixed, /pgf/number format/precision=1},
+  legend cell align=left, legend style={font=\footnotesize, draw=none, at={(0.99,0.98)}, anchor=north east}]
+  \addplot[fill=own1, draw=none] coordinates {(First rule,97.1) (New rule (two frames),22.7) (New rule (three frames),7.4)};
+  \addlegendentry{Drivers 1--9 (tuned)}
+  \addplot[fill=oth1, draw=none] coordinates {(First rule,120.3) (New rule (two frames),20.7) (New rule (three frames),9.7)};
+  \addlegendentry{Drivers 10--14 (not tuned)}
+  \draw[dashed, line width=0.8pt, gray!70!black] (axis cs:{[normalized]-1},3) -- (axis cs:{[normalized]3},3);
+  \node[font=\scriptsize, text=gray!70!black, anchor=south east, yshift=1pt] at (axis cs:{[normalized]0.72},3) {target: 3 per hour};
+\end{axis}
+\end{tikzpicture}

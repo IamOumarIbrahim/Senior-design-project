@@ -1,0 +1,16 @@
+\begin{tikzpicture}[font=\footnotesize, >={Triangle[length=2.6mm,width=2.6mm]}, arr/.style={->, line width=1.3pt}]
+  \sysblock{y0}{sbgray}{\faImage}{Input}{640$\times$640 crop of the driver}{at={(0,0)}}
+  \sysblock{y1}{sbblue}{\faLayerGroup}{Backbone}{Convolutions find edges, textures and shapes at three scales}{at={(4.4,0)}}
+  \sysblock{y2}{sbblue}{\faProjectDiagram}{Neck}{Mixes the scales so small and large cues are both seen}{at={(8.8,0)}}
+  \sysblock{y3}{sbblue}{\faCrosshairs}{Heads}{Box, confidence and class at every location}{at={(13.2,0)}}
+  \sysblock{y4}{sbgreen}{\faFilter}{NMS}{Keeps the best box and removes overlaps above an IoU threshold}{at={(13.2,-4.2)}}
+  \sysblock{y5}{sbgreen}{\faCheckSquare}{Output}{Boxes, scores and classes}{at={(8.8,-4.2)}}
+  \foreach \n/\k in {y1/2,y2/3,y3/4} \sysnum{\n}{sbblue}{\k}
+  \sysnum{y0}{sbgray}{1}
+  \foreach \n/\k in {y4/5,y5/6} \sysnum{\n}{sbgreen}{\k}
+  \draw[arr] (y0) -- (y1); \draw[arr] (y1) -- (y2); \draw[arr] (y2) -- (y3); \draw[arr] (y3) -- (y4); \draw[arr] (y4) -- (y5);
+  \begin{scope}[on background layer]
+    \node[draw=sbblue, dotted, line width=1.1pt, fill=blue!4, inner sep=5mm, fit=(y1)(y2)(y3), label={[anchor=south west, font=\small]north west:One forward pass of the network}] {};
+    \node[draw=sbgreen, dotted, line width=1.1pt, fill=green!5, inner sep=5mm, fit=(y4)(y5), label={[anchor=south west, font=\small]north west:Post-processing}] {};
+  \end{scope}
+\end{tikzpicture}

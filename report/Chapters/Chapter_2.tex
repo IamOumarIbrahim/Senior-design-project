@@ -1,0 +1,159 @@
+In this chapter, we review previous works in academic detection, research on alert design and driver trust, commercial products and public datasets, concluding with the gaps our system is designed to fill.
+
+\section{Academic research on driver monitoring}
+
+The majority of distraction research classifies a whole frame with a \gls{cnn}, reaching about 96\% accuracy on the AUC dataset \cite{r32,r34}. Once the test drivers are unseen, accuracy falls to about 90\% \cite{r33}, revealing how much of the earlier gain came from frames of the same person appearing in both splits. Drowsiness research mostly relies on facial landmarks such as the \gls{ear} \cite{r35,r40,r41}, or on models of fatigue over time \cite{r37}. These methods are lightweight, yet they fail exactly when a hand, a bottle or a phone hides the face. As Table \ref{tab:ch2-01} shows, most studies evaluate on drivers the model has already seen, few are deployed on embedded hardware, none reports false alarms per hour, and none calibrates its thresholds per driver.
+
+
+
+\begin{table}[htbp]
+\centering
+\caption{Summary of academic driver monitoring studies}
+\label{tab:ch2-01}
+\footnotesize
+\setlength{\tabcolsep}{3pt}
+\renewcommand{\arraystretch}{1.15}
+\begin{tabular}{|p{0.060\linewidth}|p{0.110\linewidth}|p{0.170\linewidth}|p{0.115\linewidth}|p{0.120\linewidth}|p{0.105\linewidth}|p{0.205\linewidth}|}
+\hline
+\textbf{Ref} & \textbf{Task} & \textbf{Method} & \textbf{Dataset} & \textbf{Metrics} & \textbf{Hardware} & \textbf{Limitation} \\
+\hline
+\cite{r32} & Distraction (10 postures) & Genetically weighted ensemble of AlexNet and Inception & AUC v1 & 95.98\% accuracy & Desktop \gls{gpu} & Frame classifier, heavy ensemble, no deployment \\
+\hline
+\cite{r34} & Distraction (10 postures) & Modified VGG-16 & AUC v1 & 96.31\% accuracy & Desktop \gls{gpu} & Very large model, single frame, no alert logic \\
+\hline
+\cite{r33} & Distraction (10 postures) & \gls{cnn} ensemble on face, hands and skin regions & AUC v2 (driver split) & 90\% accuracy & Desktop \gls{gpu} & Accuracy drops once drivers are split, not embedded \\
+\hline
+\cite{r40} & Drowsiness & Facial landmarks and a multilayer perceptron & NTHU-DDD & Above 80\% accuracy & Android phone & Landmarks lost under hand or object occlusion \\
+\hline
+\cite{r41} & Drowsiness & Face tracking, eye and mouth openness rules & Own videos & Accuracy & PC & Fixed thresholds, no per-driver calibration \\
+\hline
+\cite{r37} & Drowsiness & Hierarchical temporal deep belief network & NTHU-DDD & Accuracy, F1 & Desktop \gls{gpu} & Acted clips, no deployment, no alert design \\
+\hline
+\cite{r35} & Blinks & \gls{ear} from six landmarks and an SVM & ZJU, Eyeblink8 & Precision, recall & CPU, real time & Eyes only, sensitive to head pose and occlusion \\
+\hline
+\cite{r36} & Yawning & Face and mouth detection baseline & YawDD & Detection rate & PC & Yawning only, no covered yawns or distraction \\
+\hline
+\end{tabular}
+\end{table}
+
+\section{Alert design, trust and user experience}
+
+Detection is only half of the problem, since the alert decides whether the driver keeps the system switched on. Frequent or unjustified alerts annoy drivers, eroding their trust and their willingness to respond \cite{r28,r18,r19,r10}. Explaining what the system does and why it alerted raises trust \cite{r15,r16,r13,r27}. Graded warnings outperform single-stage ones \cite{r25,r26,r17}, and while audio is the fastest modality, it can startle the driver, performing best when combined with light or haptics \cite{r20,r21,r22,r23,r24}. Table \ref{tab:ch2-ux} groups these findings with the design decision each one drives.
+
+
+
+\begin{table}[htbp]
+\centering
+\caption{User experience findings and the design decision each one drives}
+\label{tab:ch2-ux}
+\footnotesize
+\setlength{\tabcolsep}{3pt}
+\renewcommand{\arraystretch}{1.15}
+\begin{tabular}{|p{0.17\linewidth}|p{0.15\linewidth}|p{0.34\linewidth}|p{0.25\linewidth}|}
+\hline
+\textbf{Theme} & \textbf{Studies} & \textbf{Finding} & \textbf{Our design response} \\
+\hline
+Nuisance and false alarms & \cite{r28,r18,r19,r10} & Frequent or unjustified alerts cause annoyance, distrust and ignored warnings & \gls{ema} filter, confirmation time, cool-down, hard negatives, false alarms per hour as a target \\
+\hline
+Transparency & \cite{r15,r16,r13,r27} & Explaining what the system does and why it alerted raises trust and willingness to use & Explainable voice messages, onboarding on the display, post-trip dashboard \\
+\hline
+Graded alerts & \cite{r25,r26,r17} & Multi-stage warnings shorten response time and are preferred over single-stage ones & Three-tier escalation per class \\
+\hline
+Modality & \cite{r20,r21,r22,r23,r24,r31} & Audio is fast but can startle, haptic helps under visual load, and combining modalities reduces missed warnings & Voice plus peripheral light, haptic wheel prototype, gentle first tier \\
+\hline
+Drowsy drivers & \cite{r29,r30} & Warnings help drowsy drivers mostly when they look away, and stimuli must be tuned for fatigue & Separate drowsiness tones, eye-closure tier, rest-stop suggestions \\
+\hline
+Personalisation & \cite{r13,r14} & Adapting to the individual driver improves perceived intelligence and experience & Per-driver calibration of cutoffs \\
+\hline
+\end{tabular}
+\end{table}
+
+\section{Commercial driver monitoring systems}
+
+Factory-fitted systems such as Smart Eye \cite{r62} use a hidden \gls{nir} camera and are tuned to the \gls{eu} \gls{gsr} \cite{r11}. Fleet products such as Seeing Machines Guardian \cite{r61}, Lytx DriveCam \cite{r63} and Samsara \cite{r64} send events and video to a cloud platform, where a safety manager reviews them. These products require a subscription or a new vehicle, upload driver footage, and none of them publishes false alarms per hour or exposes a per-driver calibration to the driver (Table \ref{tab:ch2-02}).
+
+
+\begin{table}[htbp]
+\centering
+\caption{Commercial driver monitoring products}
+\label{tab:ch2-02}
+\footnotesize
+\setlength{\tabcolsep}{3pt}
+\renewcommand{\arraystretch}{1.15}
+\begin{tabular}{|p{0.165\linewidth}|p{0.175\linewidth}|p{0.300\linewidth}|p{0.130\linewidth}|p{0.150\linewidth}|}
+\hline
+\textbf{Product} & \textbf{Sensing} & \textbf{Features} & \textbf{Cloud needed?} & \textbf{Price} \\
+\hline
+Seeing Machines Guardian \cite{r61} & \gls{ir} driver camera with in-cab alarm & Fatigue and distraction detection, seat vibration and audio, events reviewed by a monitoring centre & Yes & Quote and subscription \\
+\hline
+Smart Eye \cite{r62} & \gls{nir} camera, factory or aftermarket & Gaze, drowsiness, distraction and driver identification for car makers and fleets & Optional & Built into new cars or quoted \\
+\hline
+Lytx DriveCam \cite{r63} & Dual-facing video recorder & Risky behaviour detection, video events, coaching workflow & Yes & Subscription \\
+\hline
+Samsara AI dash cam \cite{r64} & Dual-facing camera & Phone use and drowsiness detection, in-cab audio alerts, fleet dashboard & Yes & Subscription \\
+\hline
+\textbf{This project} & \gls{rgb} webcam, on-device \gls{npu} & Explained tiered alerts, calibration, event-only analytics & Only after the trip & About 2725 \gls{aed} prototype \\
+\hline
+\end{tabular}
+\end{table}
+
+\section{Public datasets and why we collect our own}
+
+
+No public dataset satisfies our needs on its own. Our four classes are spread across datasets with different camera views and label definitions, hand-over-mouth is rarely labelled as its own class, and none contains hard negatives or the sun and glare of \gls{uae} cabins (Table \ref{tab:ch2-03}). We therefore pre-train on \gls{coco} \cite{r43}, use the public datasets for the studies in Chapter 1, and collect our own subject-disjoint dataset (Section \ref{sec:dataset}).
+
+\begin{table}[htbp]
+\centering
+\caption{Public datasets and their gaps for this project}
+\label{tab:ch2-03}
+\footnotesize
+\setlength{\tabcolsep}{3pt}
+\renewcommand{\arraystretch}{1.15}
+\begin{tabular}{|p{0.180\linewidth}|p{0.205\linewidth}|p{0.155\linewidth}|p{0.120\linewidth}|p{0.250\linewidth}|}
+\hline
+\textbf{Dataset} & \textbf{Classes} & \textbf{Camera view} & \textbf{Subject split?} & \textbf{Gap for us} \\
+\hline
+State Farm Distracted Driver \cite{r42} & Ten postures incl.\ texting, phone call, drinking & Side view, still images & Hidden test set, often split at random & No yawning, wrong view, no video \\
+\hline
+YawDD \cite{r36} & Normal, talking/singing, yawning & Mirror and dashboard & Not defined & No distraction classes, few covered yawns \\
+\hline
+NTHU-DDD \cite{r37} & Drowsy cues: yawning, nodding, slow blinks & Frontal, \gls{rgb} and \gls{ir} & By subject & Acted, no phone or drinking \\
+\hline
+DMD \cite{r38} & Distraction, drowsiness, gaze, hands & Face, body and hands, \gls{rgb}/\gls{ir}/depth & Possible by subject & Different label set, no \gls{uae} conditions, no hard negatives \\
+\hline
+Drive\&Act \cite{r39} & Fine-grained in-cabin activities & Multiple \gls{nir} and depth views & By subject & Automated-driving activities, \gls{nir} only \\
+\hline
+\end{tabular}
+\end{table}
+
+\section{Comparison of approaches and the gap this project fills}
+
+Table \ref{tab:ch2-04} groups the reviewed work into families. Landmark rules run on-device but cannot see objects, \gls{cnn} classifiers recognise objects but are heavy and rarely tested on unseen drivers, and commercial systems are robust but closed or cloud-dependent. No family satisfies all six needs in the last row, and each need maps to a feature of Section 1.4.
+
+
+
+\begin{table}[htbp]
+\centering
+\caption{Gap table across approach families}
+\label{tab:ch2-04}
+\footnotesize
+\setlength{\tabcolsep}{3pt}
+\renewcommand{\arraystretch}{1.15}
+\begin{tabular}{|p{0.170\linewidth}|p{0.090\linewidth}|p{0.135\linewidth}|p{0.125\linewidth}|p{0.110\linewidth}|p{0.110\linewidth}|p{0.105\linewidth}|}
+\hline
+\textbf{Approach / work} & \textbf{On-device?} & \textbf{Hand-over-mouth, drinking, phone?} & \textbf{Subject-disjoint evaluation?} & \textbf{Reports false alarms/h?} & \textbf{Per-driver calibration?} & \textbf{No raw video?} \\
+\hline
+Landmark / rule-based \cite{r35,r40,r41} & Yes & No & Rarely & No & No & Yes \\
+\hline
+\gls{cnn} classification \cite{r32,r34,r33} & No & Partly & Rarely & No & No & Yes \\
+\hline
+Object detection (academic) & Rarely & Yes & Rarely & No & No & Yes \\
+\hline
+Commercial \gls{ir} \cite{r62} & Yes & Partly & Not public & Not public & No & Yes \\
+\hline
+Cloud-based fleet \cite{r61,r63,r64} & Partly & Partly & Not public & Not public & No & No \\
+\hline
+\textbf{This project} & \textbf{Yes} & \textbf{Yes} & \textbf{Yes} & \textbf{Yes} & \textbf{Yes} & \textbf{Yes} \\
+\hline
+\end{tabular}
+\end{table}

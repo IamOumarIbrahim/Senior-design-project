@@ -1,0 +1,19 @@
+flowchart TD
+  A([Power on]) --> B[Boot and self-check<br>camera, speaker, LED]
+  B --> C{Self-check ok?}
+  C -- no --> C1[Voice: device fault<br>log and retry] --> B
+  C -- yes --> D[Driver PIN on display]
+  D --> E{Known driver?}
+  E -- no --> F[20 s calibration] --> G
+  E -- yes --> G[Load cutoffs]
+  G --> H[[Detection and alert loop]]
+  H --> I{Ignition off or<br>session ended?}
+  I -- no --> H
+  I -- yes --> J[Flush log]
+  J --> K{Wi-Fi?}
+  K -- yes --> L[TLS upload of events] --> M([Shutdown])
+  K -- no --> M
+  classDef req fill:#eaf2fe,stroke:#2f80ed
+  classDef des fill:#fff4e2,stroke:#e58e0b
+  class B,G,H,J req
+  class D,F,L des

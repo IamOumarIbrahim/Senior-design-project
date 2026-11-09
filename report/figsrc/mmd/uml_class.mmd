@@ -1,0 +1,66 @@
+classDiagram
+  direction LR
+  class FrameGrabber {
+    +fps: float
+    +start()
+    +read() Frame
+  }
+  class Preprocessor {
+    +blind_check(img, t) bool
+    +crop_resize(f) Tensor
+  }
+  class Detector {
+    +backend: torch | onnx | ncnn | hailo
+    +scores(img, conf) dict
+  }
+  class EMAFilter {
+    +tau_s: dict
+    +update(scores, dt) dict
+    +reset()
+  }
+  class DecisionEngine {
+    +cutoffs: dict
+    +cooldown_s: float
+    +step(ema, t, raw, eye) list~Event~
+    +set_blocked(on, t)
+  }
+  class AlertManager {
+    +flash(pattern, seconds)
+    +say(key)
+  }
+  class EventLogger {
+    +db: SQLite WAL
+    +write(event, session_id, ts)
+    +set_duration(event_id, d)
+  }
+  class Uploader {
+    +endpoint: HTTPS
+    +sync() int
+  }
+  class Calibrator {
+    +run(20 s) cutoffs, ear_open, pitch_rest
+  }
+  class EyeModule {
+    +measure(f) EAR, blink, pitch
+    +perclos(t) float
+    +learn_pitch(pitch, t)
+  }
+  class CropTracker {
+    +update(f, t) Rect
+  }
+  class TabletUI {
+    +show_status(word, tier, message)
+    +pin_login()
+  }
+  FrameGrabber --> Preprocessor : frame
+  Preprocessor --> Detector : 400x400 RoI
+  Preprocessor --> EyeModule : face
+  CropTracker ..> Preprocessor : crop
+  Detector --> EMAFilter : scores
+  EMAFilter --> DecisionEngine : smoothed
+  EyeModule --> DecisionEngine : EAR, blink, pitch
+  Calibrator ..> DecisionEngine : cutoffs
+  DecisionEngine --> AlertManager : event
+  DecisionEngine --> EventLogger : event, escalated
+  AlertManager --> TabletUI : status
+  EventLogger --> Uploader : unsent rows

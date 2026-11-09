@@ -14,3 +14,28 @@ frames/
 .env
 *.dll
 *.so
+
+# Zip archives
+*.zip
+
+# LaTeX build temp files (report/build_clean.bat recreates them)
+*.acn
+*.acr
+*.alg
+*.aux
+*.bbl
+*.blg
+*.glg
+*.glo
+*.gls
+*.ist
+*.loc
+*.lof
+*.log
+*.lot
+*.out
+*.soc
+*.toc
+*.synctex.gz
+*.fls
+*.fdb_latexmk

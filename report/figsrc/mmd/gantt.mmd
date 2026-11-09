@@ -1,0 +1,27 @@
+gantt
+  dateFormat YYYY-MM-DD
+  axisFormat %d %b
+  tickInterval 2week
+  section Setup
+  Order and receive parts            :a1, 2027-01-18, 14d
+  Bench assembly and wiring          :a2, after a1, 7d
+  section Data
+  Consent and recruitment            :b1, 2027-01-18, 14d
+  Record sessions (start early)      :b2, 2027-01-25, 35d
+  Label and split by subject         :b3, 2027-02-08, 28d
+  Hard-negative round                :b4, 2027-03-22, 14d
+  section Required
+  Pipeline on Pi and Hailo           :c1, 2027-02-01, 21d
+  EMA, cooldown, alerts, logging     :c2, after c1, 14d
+  Required features frozen           :milestone, m1, 2027-03-08, 0d
+  section Desired
+  Calibration and blind check        :d1, 2027-03-08, 14d
+  Display UI and tiers               :d2, 2027-03-08, 21d
+  Upload and dashboard               :d3, 2027-03-22, 21d
+  Eye module, crop tracking          :d4, 2027-04-05, 14d
+  section Test
+  Model, Pi and feature tests        :e1, 2027-04-12, 21d
+  Eid al-Fitr break (approx.)        :crit, e0, 2027-03-08, 5d
+  section Close
+  Report, poster, presentation       :f1, 2027-05-03, 14d
+  SDP2 demo                          :milestone, m2, 2027-05-17, 0d

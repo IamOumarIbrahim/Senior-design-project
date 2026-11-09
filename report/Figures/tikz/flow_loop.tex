@@ -1,0 +1,40 @@
+\begin{tikzpicture}[node distance=6mm and 10mm]
+  % every frame
+  \fcard{g}{sbblue}{\faCamera}{Grab 1080p frame, measure $\Delta t$}{}
+  \fdec{b}{sbblue}{Blocked for 3\,s?}{below=of g}
+  \fcard{bb}{sbred}{\faVolumeUp}{Voice: camera blocked, pause, log}{left=of b}
+  \fcard{c}{sbblue}{\faCrop}{640$\times$640 crop}{below=of b}
+  \fcard{y}{sbblue}{\faProjectDiagram}{\gls{yolo}11n on the \gls{npu}}{below=of c}
+  \fcard{e}{sbblue}{\faFilter}{Max score per class, \gls{ema} update}{below=of y}
+  % decision
+  \fdec{d1}{sbred}{Above cutoff?}{right=26mm of g}
+  \fdec{d2}{sbred}{Held for confirm time?}{below=of d1}
+  \fdec{d3}{sbred}{In cool-down?}{below=of d2}
+  \fcard{t}{sbred}{\faLayerGroup}{Select tier from duration and recent events}{below=of d3}
+  \fcard{a}{sbred}{\faBell}{Light pattern and explained voice message}{below=of t}
+  \fcard{l}{sbblue}{\faDatabase}{Write event to SQLite}{below=of a}
+
+  \coordinate (top) at ($(g.north)+(0,14mm)$);
+  \coordinate (lane) at ($(d1.east)+(9mm,0)$);
+  \draw[farr] (g) -- (b);
+  \draw[farr] (b) -- node[flab, right]{no} (c);
+  \draw[farr] (b) -- node[flab, above]{yes} (bb);
+  \draw[farr] (bb.north) |- (g.west);
+  \draw[farr] (c) -- (y); \draw[farr] (y) -- (e);
+  \draw[farr] (e.east) -- ++(8mm,0) |- (d1.west);
+  \draw[farr] (d1) -- node[flab, right]{yes} (d2);
+  \draw[farr] (d2) -- node[flab, right]{yes} (d3);
+  \draw[farr] (d3) -- node[flab, right]{no} (t);
+  \draw[farr] (t) -- (a); \draw[farr] (a) -- (l);
+  % return lane to the next frame
+  \draw[fline] (d1.east) -- node[flab, above]{no} (d1.east -| lane);
+  \draw[fline] (d2.east) -- node[flab, above]{no} (d2.east -| lane);
+  \draw[fline] (d3.east) -- node[flab, above]{yes} (d3.east -| lane);
+  \draw[fline] (l.east) -- (l.east -| lane);
+  \draw[farr] (l.east -| lane) -- (lane |- top) -- node[flab, above, pos=0.5]{next frame} (top) -- (g.north);
+
+  \begin{scope}[on background layer]
+    \node[freg=sbblue, fit=(g)(bb)(e), label={[freglab]north west:Every frame}] {};
+    \node[freg=sbred, fit=(d1)(d2)(l), label={[freglab]north west:Decision and alert}] {};
+  \end{scope}
+\end{tikzpicture}

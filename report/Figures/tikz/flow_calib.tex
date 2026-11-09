@@ -1,0 +1,19 @@
+\begin{tikzpicture}[node distance=6mm and 8mm]
+  \fterm{n}{sbblue}{New driver}{}
+  \fcard{p}{sbblue}{\faUser}{Prompt: sit normally, eyes on the road}{right=of n}
+  \fcard{r}{sbblue}{\faStopwatch}{Detector at 0.05 for 20\,s (600 frames)}{right=of p}
+  \fdec{q}{sbblue}{Over 10\% of frames above default?}{right=of r}
+  \fcard{k}{sbred}{\faRedo}{Keep defaults, ask to redo}{above=10mm of q}
+  \fcard{s}{sbblue}{\faPercent}{Per class: $P_{99}$ + 0.05}{below=10mm of q}
+  \fcard{c}{sbblue}{\faCompress}{Clamp between default and 0.85}{left=of s}
+  \fcard{e}{sbblue}{\faEye}{Store open-eye \gls{ear}}{left=of c}
+  \fterm{v}{sbgreen}{Save cutoffs}{left=of e}
+  \draw[farr] (n) -- (p); \draw[farr] (p) -- (r); \draw[farr] (r) -- (q);
+  \draw[farr] (q) -- node[flab, right]{yes} (k);
+  \draw[farr] (k.west) -| (p.north);
+  \draw[farr] (q) -- node[flab, right]{no} (s);
+  \draw[farr] (s) -- (c); \draw[farr] (c) -- (e); \draw[farr] (e) -- (v);
+  \begin{scope}[on background layer]
+    \node[freg=sbblue, fit=(n)(k)(s)(v), label={[freglab]north west:New-driver calibration}] {};
+  \end{scope}
+\end{tikzpicture}

@@ -1,0 +1,16 @@
+sequenceDiagram
+  participant L as SQLite log
+  participant P as Pi 5 uploader
+  participant S as Server API
+  participant D as Database
+  participant W as Dashboard
+  P->>L: read unsent events
+  L-->>P: event rows with tier and escalated flag, no video
+  P->>S: POST events over TLS with device key
+  Note right of S: check key and event IDs
+  S->>D: insert, skip duplicates
+  D-->>S: stored
+  S-->>P: accepted IDs
+  P->>L: mark rows as uploaded
+  D->>W: refresh trends and tips
+  Note over L,P: No connection: retry after 30, 60 and 120 s

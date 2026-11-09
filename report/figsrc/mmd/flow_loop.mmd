@@ -1,0 +1,17 @@
+flowchart TD
+  A[Grab 1080p frame] --> B{Blind check<br>brightness, sharpness}
+  B -- blocked 3 s --> B1[Voice: camera blocked<br>log, pause monitoring] --> A
+  B -- clear --> C[640x640 crop]
+  C --> D[YOLO11n on Hailo]
+  D --> E[Max score per class]
+  E --> F[EMA update with dt]
+  F --> G{EMA above<br>cutoff?}
+  G -- no --> A
+  G -- yes --> H{Held for<br>confirm time?}
+  H -- no --> A
+  H -- yes --> I{In cooldown?}
+  I -- yes --> A
+  I -- no --> J[Select tier]
+  J --> K[LED pattern and<br>voice message]
+  K --> L[Write event to SQLite]
+  L --> A

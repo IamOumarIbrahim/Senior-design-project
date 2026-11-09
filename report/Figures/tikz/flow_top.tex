@@ -1,0 +1,42 @@
+\begin{tikzpicture}[node distance=6mm and 10mm]
+  % start-up
+  \fterm{a}{sbgray}{Power on}{}
+  \fcard{b}{sbgray}{\faPowerOff}{Boot and self-check: camera, speaker, light bar}{below=of a}
+  \fdec{c}{sbgray}{Self-check ok?}{below=of b}
+  \fcard{c1}{sbred}{\faVolumeUp}{Voice: device fault, log and retry}{left=of c}
+  \fcard{d}{sbblue}{\faKeyboard}{Driver enters PIN}{below=of c, dashed}
+  \fdec{e}{sbblue}{Known driver?}{below=of d}
+  \fcard{f}{sbblue}{\faUserCheck}{20\,s calibration}{right=of e, dashed}
+  \fcard{g}{sbblue}{\faSlidersH}{Load the driver's cutoffs}{below=of e}
+  % drive
+  \fcard{h}{sbblue}{\faSync}{Detection and alert loop (Figure \ref{fig:ch4-12})}{below=20mm of g}
+  \fdec{i}{sbblue}{Session ended?}{below=of h}
+  % after the drive
+  \fcard{j}{sbgreen}{\faSave}{Flush and checkpoint the log}{below=20mm of i}
+  \fdec{k}{sbgreen}{Wi-Fi available?}{below=of j}
+  \fcard{l}{sbgreen}{\faCloud}{\gls{tls} upload of events}{right=of k, dashed}
+  \fterm{m}{sbgreen}{Shutdown}{below=of k}
+
+  \draw[farr] (a) -- (b); \draw[farr] (b) -- (c);
+  \draw[farr] (c) -- node[flab, right]{yes} (d);
+  \draw[farr] (c) -- node[flab, above]{no} (c1);
+  \draw[farr] (c1.north) |- (b.west);
+  \draw[farr] (d) -- (e);
+  \draw[farr] (e) -- node[flab, right]{yes} (g);
+  \draw[farr] (e) -- node[flab, above]{no} (f);
+  \draw[farr] (f.south) |- (g.east);
+  \draw[farr] (g) -- (h); \draw[farr] (h) -- (i);
+  \draw[farr] (i) -- node[flab, left, pos=0.3]{yes} (j);
+  \draw[farr] (i.west) -- node[flab, above]{no} ++(-14mm,0) |- (h.west);
+  \draw[farr] (j) -- (k);
+  \draw[farr] (k) -- node[flab, above]{yes} (l);
+  \draw[farr] (k) -- node[flab, right]{no} (m);
+  \draw[farr] (l.south) |- (m.east);
+
+  \coordinate (iw) at ([xshift=-14mm]i.west);
+  \begin{scope}[on background layer]
+    \node[freg=sbgray, fit=(a)(c1)(f)(g), label={[freglab]north west:Start-up}] {};
+    \node[freg=sbblue, fit=(h)(i)(iw), label={[freglab]north west:During the drive}] {};
+    \node[freg=sbgreen, fit=(j)(l)(m), label={[freglab]north west:After the drive}] {};
+  \end{scope}
+\end{tikzpicture}

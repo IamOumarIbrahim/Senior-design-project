@@ -1,0 +1,23 @@
+\section{Main findings}
+
+Nuisance alerts, whether true or false, lead drivers to distrust or switch off the very systems meant to keep them safe. We designed an edge-cloud \gls{dms} around the experience of the driver, in which a Raspberry Pi 5 with an AI HAT+ watches for yawning, hand-over-mouth, drinking and phone use, keeps all video on the device, and warns only when a behaviour is real, through alerts that explain themselves. On-device detection won our weighted comparison, and nuisance is controlled in layers: hard negatives, an \gls{ema} defined in seconds, confirmation times, a cool-down and per-driver calibration.
+
+Our preliminary studies support \gls{yolo}11n, hard negatives and simple smoothing, while showing that cutoffs do not transfer between drivers. The full software now runs on a PC (Chapter 6), where all 194 checks pass and a replay of a held-out driver caught four of four phone cues and two of four drinking cues without any detector false alert. The most useful result was a failure: the planned eye rule fired about 100 times per hour, and our revised rule reduces this by about 80\%, yet remains above target. Four pilot sessions with three of the authors in real cars confirmed the dash-top mount and showed how strongly night street light changes the face. No detection result so far comes from the Pi or from our own subjects.
+
+
+
+
+\section{Final impression: why this design is the right solution}
+
+Existing systems either detect well but remain in the lab, or are deployed but closed, cloud-dependent and designed for compliance rather than for the person driving. Our design sits in the gap between them, running a modern detector on affordable hardware, never sending video off the device, reporting the metric that matters to drivers and adapting to each driver. Above all, it treats every alert as a message to a tired person who simply wants to reach their destination, speaking rarely, clearly and only when it matters. We believe this is the kind of system a driver would choose to keep switched on.
+
+\section{Recommendations and what comes next}
+\subsection{Next steps in SDP2}
+
+SDP~2 moves from building to proving. Once the parts arrive, we assemble the demonstration rig of Section \ref{sec:demo}, compile \gls{yolo}11n for the AI HAT+ and run the first Pi benchmarks of Section 5.4.2, while recording the dataset in parked cars, which is the longest task. The Required features are frozen by week 8, followed by the Desired features in priority order, with the eye module last, as it needs real closures recorded on the C922 (Section \ref{sec:eye-results}). Should time run short, the lowest-priority Desired features are dropped rather than delaying the Required build. The final demonstration takes place on the desk rig in a room, while in-car deployment remains beyond the scope of SDP~2.
+
+
+\subsection{Future extensions beyond SDP2}
+\label{sec:future}
+
+The Future items of Table \ref{tab:future-features} extend the system in three directions. The first adds sensing, where fusing \gls{rgb} with \gls{ir} would make the system work at night, building on our own RGB-thermal fusion study \cite{rs4}, while a second camera, wearables and access to the car's climate and audio would enrich what the system sees and how it responds. The second improves evaluation and adaptation, through in-car deployment, a robustness study across glare, low light, glasses, face coverings and different cars, a larger and more varied set of subjects, and alerts that stay quiet when vehicle signals show reversing, red lights or heavy traffic. The third covers interaction and privacy, with voice questions such as ``how tired am I?'', a real steering-wheel vibration alert based on our PXN prototype, and a delete-my-data button that gives drivers full control over their records.

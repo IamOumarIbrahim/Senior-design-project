@@ -1,0 +1,21 @@
+\begin{tikzpicture}[node distance=6mm and 10mm]
+  \fcard{ac}{sbgray}{\faPlug}{Mains 100--240 V AC}{}
+  \fcard{psu}{sbgray}{\faBolt}{27 W PD supply, 5.1 V, 5 A}{below=of ac}
+  \fcard{car}{sbgray}{\faCar}{12 V car socket and PD adapter (Future)}{below=of psu, dashed}
+  \fcard{pi}{sbblue}{\faMicrochip}{Raspberry Pi 5, 5 V rail}{right=14mm of psu}
+  \fcard{hat}{sbblue}{\faBrain}{AI HAT+ (header 5 V)}{right=14mm of pi, yshift=16mm}
+  \fcard{usb}{sbblue}{\faUsb}{\gls{usb} ports, $\le$ 1.6 A total}{right=14mm of pi}
+  \fcard{bar}{sbred}{\faLightbulb}{Light bar via \gls{mosfet}}{right=14mm of pi, yshift=-16mm}
+  \fcard{dev}{sbblue}{\faCamera}{Camera, speakers, touch, wheel}{right=of usb}
+  \draw[farr] (ac) -- (psu);
+  \draw[farr] (psu) -- node[flab, above]{\gls{usb}-C} (pi);
+  \draw[farr, dashed] (car.east) -| ([xshift=-6mm]pi.south);
+  \draw[farr] (pi.east) -- ++(5mm,0) |- (hat.west);
+  \draw[farr] (pi) -- (usb);
+  \draw[farr] (pi.east) -- ++(5mm,0) |- (bar.west);
+  \draw[farr] (usb) -- node[flab, above]{hub} (dev);
+  \begin{scope}[on background layer]
+    \node[freg=sbgray, fit=(ac)(car), label={[freglab]north west:Supply}] {};
+    \node[freg=sbblue, fit=(pi)(hat)(bar)(dev), label={[freglab]north west:5 V rail}] {};
+  \end{scope}
+\end{tikzpicture}

@@ -1,0 +1,29 @@
+\begin{tikzpicture}[node distance=6mm and 8mm]
+  % design
+  \fcard{s1}{sbgray}{\faListUl}{Specify requirements}{}
+  \fcard{s2}{sbgray}{\faSearch}{Survey alternatives}{right=of s1}
+  \fcard{s3}{sbgray}{\faBalanceScale}{Score and select}{right=of s2}
+  \fcard{s4}{sbgray}{\faTools}{Build prototype}{right=of s3}
+  % model loop
+  \fcard{m1}{sbblue}{\faVideo}{Collect clips}{below=16mm of s1}
+  \fcard{m2}{sbblue}{\faCogs}{Train or fine-tune}{right=of m1}
+  \fcard{m3}{sbblue}{\faChartBar}{Evaluate on validation}{right=of m2}
+  \fcard{m4}{sbblue}{\faSearchPlus}{Error analysis}{below=of m3}
+  \fcard{m5}{sbblue}{\faTimesCircle}{Record hard negatives}{below=of m2}
+  % verify
+  \fcard{v1}{sbgreen}{\faMicrochip}{Measure on the Pi 5}{right=18mm of m3}
+  \fdec{v2}{sbgreen}{Meets the spec?}{below=of v1}
+  \fterm{v3}{sbgreen}{Freeze, test once}{below=of v2}
+  \draw[farr] (s1) -- (s2); \draw[farr] (s2) -- (s3); \draw[farr] (s3) -- (s4);
+  \draw[farr] (s4.south) -- ++(0,-5mm) -| (m1.north);
+  \draw[farr] (m1) -- (m2); \draw[farr] (m2) -- (m3); \draw[farr] (m3) -- (m4);
+  \draw[farr] (m4) -- (m5); \draw[farr] (m5) -- (m2);
+  \draw[farr] (m3) -- (v1); \draw[farr] (v1) -- (v2);
+  \draw[farr] (v2) -- node[flab, right]{yes} (v3);
+  \draw[farr] (v2.west) -- node[flab, above]{no} (m4.east);
+  \begin{scope}[on background layer]
+    \node[freg=sbgray, fit=(s1)(s4), label={[freglab]north west:Design}] {};
+    \node[freg=sbblue, fit=(m1)(m3)(m5)(m4), label={[freglab]north west:Model loop}] {};
+    \node[freg=sbgreen, fit=(v1)(v3), label={[freglab]north west:Verify}] {};
+  \end{scope}
+\end{tikzpicture}

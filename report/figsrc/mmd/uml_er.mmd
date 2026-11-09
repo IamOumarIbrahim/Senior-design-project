@@ -1,0 +1,53 @@
+erDiagram
+  DRIVER ||--o{ SESSION : drives
+  DRIVER ||--o{ CALIBRATION : has
+  DEVICE ||--o{ SESSION : records
+  SESSION ||--o{ EVENT : contains
+  SESSION ||--o{ TIP : produces
+  DRIVER {
+    int driver_id PK
+    text pin_hash
+    text display_name
+    text language
+  }
+  DEVICE {
+    text device_id PK
+    text model_version
+    text api_key_hash
+  }
+  CALIBRATION {
+    int calib_id PK
+    int driver_id FK
+    text class_name
+    real cutoff
+    real ear_open
+    real pitch_rest
+    datetime created_at
+  }
+  SESSION {
+    text session_id PK
+    int driver_id FK
+    text device_id FK
+    datetime started_at
+    datetime ended_at
+    real monitored_pct
+    int uploaded
+  }
+  EVENT {
+    text event_id PK
+    text session_id FK
+    datetime ts
+    text class_name
+    real confidence
+    real duration_s
+    int tier
+    text message
+    int escalated
+    int uploaded
+  }
+  TIP {
+    int tip_id PK
+    text session_id FK
+    text rule
+    text text
+  }

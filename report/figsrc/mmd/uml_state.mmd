@@ -1,0 +1,26 @@
+stateDiagram-v2
+  direction LR
+  [*] --> Idle
+  Idle --> Candidate : EMA > cutoff
+  Candidate --> Idle : EMA < cutoff
+  Candidate --> Tier1 : held for confirm time
+  Tier1 --> Tier2 : persists 5 s or 3 events in 5 min
+  Tier2 --> Tier3 : persists 10 s or eyes closed 1.5 s
+  Tier1 --> Cooldown : cue ends
+  Tier2 --> Cooldown : cue ends
+  Tier3 --> Cooldown : cue ends
+  Cooldown --> Idle : 30 s elapsed
+  Idle --> Suppressed : camera blocked
+  Suppressed --> Idle : view clear
+  state Tier1 {
+    direction LR
+    [*] --> chime
+  }
+  state Tier2 {
+    direction LR
+    [*] --> voice
+  }
+  state Tier3 {
+    direction LR
+    [*] --> alarm_LED
+  }

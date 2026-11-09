@@ -1,0 +1,96 @@
+<!doctype html>
+<html><head><meta charset="utf-8"><script src="icons.js"></script>
+<style>
+  html,body { margin:0; width:1800px; height:1120px; background:#fff; font-family:"Times New Roman",serif; overflow:hidden; }
+  .abs { position:absolute; }
+  .box { position:absolute; display:flex; align-items:center; gap:12px; background:#fff; border:2px solid #d9e0e8; border-radius:14px; padding:10px 16px; font-size:23px; color:#1b2430; }
+  .box .ic { width:42px; height:42px; border-radius:50%; display:flex; align-items:center; justify-content:center; }
+  .tag { position:absolute; font-size:21px; color:#1b2430; background:rgba(255,255,255,.92); padding:1px 6px; border-radius:6px; }
+</style></head>
+<body>
+<img class="abs" id="pi" src="../fritzing/raspberry-pi-4B_1_breadboard.svg" style="left:470px; top:400px; width:900px">
+<div class="abs" style="left:572px; top:480px; width:340px; height:50px; background:#007300"></div>
+<div class="abs" style="left:582px; top:486px; color:#fff; font-size:25px; font-weight:bold">Raspberry Pi 5</div>
+<img class="abs" id="fet" src="../fritzing/mosfet_n_channel.svg" style="left:1012px; top:70px; width:92px">
+<svg class="abs" id="w" width="1800" height="1120" style="left:0; top:0"></svg>
+<div id="boxes"></div>
+<script>
+const S = 900 / 3430, PX = 470, PY = 400;
+const pin = n => [PX + S * (329.37 + 100 * Math.floor((n - 1) / 2)), PY + S * (n % 2 ? 187.8 : 87.8)];
+const fs = 92 / 36.998, FX = 1012, FY = 70;
+const fet = k => [FX + fs * (9.0 + 10 * k), FY + fs * 62.0];      // G, D, S
+const svg = document.getElementById('w'), NS = 'http://www.w3.org/2000/svg';
+function el(t, a, txt) { const e = document.createElementNS(NS, t); for (const k in a) e.setAttribute(k, a[k]); if (txt) e.textContent = txt; svg.appendChild(e); return e; }
+function wire(pts, c, w = 7) {
+  let d = `M${pts[0][0]},${pts[0][1]}`;
+  for (let i = 1; i < pts.length; i++) d += ` L${pts[i][0]},${pts[i][1]}`;
+  el('path', { d, fill: 'none', stroke: '#00000030', 'stroke-width': w + 3, 'stroke-linecap': 'round', 'stroke-linejoin': 'round' });
+  el('path', { d, fill: 'none', stroke: c, 'stroke-width': w, 'stroke-linecap': 'round', 'stroke-linejoin': 'round' });
+  pts.forEach((p, i) => { if (i === 0 || i === pts.length - 1) el('circle', { cx: p[0], cy: p[1], r: 6, fill: c, stroke: '#fff', 'stroke-width': 2 }); });
+}
+function resistor(x, y, bands, label) {
+  el('line', { x1: x - 46, y1: y, x2: x + 46, y2: y, stroke: '#9aa3ad', 'stroke-width': 4 });
+  el('rect', { x: x - 30, y: y - 12, width: 60, height: 24, rx: 10, fill: '#e8d4a8', stroke: '#c7ae7c' });
+  bands.forEach((b, i) => el('rect', { x: x - 20 + i * 10, y: y - 12, width: 5, height: 24, fill: b }));
+  el('text', { x, y: y - 22, 'font-size': 22, 'text-anchor': 'middle', fill: '#1b2430', 'font-family': 'Times New Roman' }, label);
+  return [[x - 46, y], [x + 46, y]];
+}
+// RGB bar
+const bx = 1280, by = 70, bw = 420, bh = 46;
+const g = el('defs', {}); g.innerHTML = '<linearGradient id="rb"><stop offset="0" stop-color="#ff3b3b"/><stop offset=".2" stop-color="#ffb000"/><stop offset=".4" stop-color="#f5f53b"/><stop offset=".6" stop-color="#3bf58a"/><stop offset=".8" stop-color="#3bb8ff"/><stop offset="1" stop-color="#b03bff"/></linearGradient>';
+el('rect', { x: bx - 8, y: by - 8, width: bw + 16, height: bh + 16, rx: 14, fill: '#15171b' });
+el('rect', { x: bx, y: by, width: bw, height: bh, rx: 9, fill: 'url(#rb)' });
+el('text', { x: bx + bw / 2, y: by + bh + 40, 'font-size': 23, 'text-anchor': 'middle', fill: '#1b2430', 'font-family': 'Times New Roman' }, 'RGB light bar');
+const barP = [bx + 30, by - 8], barN = [bx + 80, by + bh + 8];
+el('text', { x: barP[0] + 20, y: by - 14, 'font-size': 22, fill: '#d64545', 'text-anchor': 'middle' }, '+');
+el('text', { x: barN[0] + 20, y: by + bh + 30, 'font-size': 22, fill: '#333', 'text-anchor': 'middle' }, '−');
+el('text', { x: FX + 46, y: FY - 14, 'font-size': 22, 'text-anchor': 'middle', fill: '#1b2430' }, 'N-MOSFET');
+['G', 'D', 'S'].forEach((t, k) => el('text', { x: fet(k)[0], y: fet(k)[1] - 22, 'font-size': 17, 'font-weight': 'bold', 'text-anchor': 'middle', fill: '#ffffff' }, t));
+const r1 = resistor(860, 250, ['#d64545', '#d64545', '#7a4b1e'], '220 Ω');
+const r2 = resistor(860, 340, ['#7a4b1e', '#111', '#ff8c1a'], '10 kΩ');
+// wires
+const RED = '#d64545', BLK = '#222', YEL = '#e9b500';
+const G = fet(0), Dr = fet(1), So = fet(2);
+wire([pin(12), [pin(12)[0], 250], r1[0]], YEL);                        // GPIO18 -> R1
+wire([r1[1], [G[0], 250], G], YEL);                                    // R1 -> gate
+wire([pin(6), [pin(6)[0], 340], r2[0]], BLK);                          // GND -> R2
+wire([r2[1], [G[0], 340], [G[0], 250]], BLK, 4);                       // R2 -> gate node
+el('circle', { cx: G[0], cy: 250, r: 7, fill: YEL, stroke: '#fff', 'stroke-width': 2 });
+wire([[pin(6)[0], 390], [So[0], 390], So], BLK);                       // GND node -> source
+el('circle', { cx: pin(6)[0], cy: 390, r: 8, fill: BLK });
+wire([pin(2), [pin(2)[0], 24], [barP[0], 24], barP], RED);             // 5 V -> bar +
+wire([Dr, [Dr[0], 290], [barN[0], 290], barN], BLK);                   // drain -> bar -
+[[2, '2'], [6, '6'], [12, '12']].forEach(([n, t]) => {
+  const p = pin(n); el('text', { x: p[0] - 28, y: p[1] - 12, 'font-size': 20, fill: '#1b2430', 'font-weight': 'bold' }, t);
+});
+// device boxes
+const B = document.getElementById('boxes');
+function box(x, y, ic, col, bg, label) {
+  B.insertAdjacentHTML('beforeend', `<div class="box" style="left:${x}px;top:${y}px"><div class="ic" style="background:${bg}">${icon(ic, 24, col, 2)}</div>${label}</div>`);
+}
+const usb = [PX + S * 3300, PY + S * 1450];
+box(1460, 520, 'bars', '#5b6675', '#eef1f5', 'USB 3.0 hub');
+const hubIn = [1460, 548], hubOut = [1640, 600];
+el('path', { d: `M${usb[0]},${usb[1]} L1420,${usb[1]} L1420,${hubIn[1]} L${hubIn[0]},${hubIn[1]}`, fill: 'none', stroke: '#2f80ed', 'stroke-width': 7, 'stroke-linejoin': 'round' });
+const devs = [['cam', '#2f80ed', '#eaf2fe', 'Logitech C922', 650], ['mouth', '#e58e0b', '#fff4e2', 'Pebble V3', 740],
+              ['phone', '#27ae60', '#e6f6ec', 'Display touch', 830], ['wheel', '#d64545', '#fdecec', 'PXN wheel', 920]];
+el('path', { d: `M1500,580 L1500,951`, fill: 'none', stroke: '#2f80ed', 'stroke-width': 5 });
+devs.forEach(([ic, c, bg, t, y]) => {
+  box(1530, y, ic, c, bg, t);
+  el('path', { d: `M1500,${y + 31} L1530,${y + 31}`, fill: 'none', stroke: '#2f80ed', 'stroke-width': 5 });
+});
+const hdmi = [PX + S * 1040, PY + S * 2280], pwr = [PX + S * 440, PY + S * 2280];
+box(860, 1050, 'phone', '#27ae60', '#e6f6ec', '7" display (micro-HDMI)');
+box(380, 1050, 'bulb', '#5b6675', '#eef1f5', '27 W USB-C PD');
+el('path', { d: `M${hdmi[0]},${hdmi[1]} L${hdmi[0]},1025 L960,1025 L960,1050`, fill: 'none', stroke: '#27ae60', 'stroke-width': 7, 'stroke-linejoin': 'round' });
+el('path', { d: `M${pwr[0]},${pwr[1]} L${pwr[0]},1050`, fill: 'none', stroke: '#5b6675', 'stroke-width': 7 });
+box(90, 600, 'shield', '#2f80ed', '#eaf2fe', 'AI HAT+ (Hailo)');
+el('path', { d: `M330,628 L420,628 L420,${PY + S * 1100} L${PX + S * 380},${PY + S * 1100}`, fill: 'none', stroke: '#2f80ed', 'stroke-width': 6, 'stroke-dasharray': '14 10', 'stroke-linejoin': 'round' });
+el('text', { x: 432, y: 668, 'font-size': 20, fill: '#5b6675' }, 'PCIe FPC');
+// legend
+[[RED, '5 V'], [BLK, 'GND'], [YEL, 'GPIO18 (PWM)'], ['#2f80ed', 'USB']].forEach(([c, t], i) => {
+  el('line', { x1: 60, y1: 80 + i * 40, x2: 110, y2: 80 + i * 40, stroke: c, 'stroke-width': 7, 'stroke-linecap': 'round' });
+  el('text', { x: 124, y: 87 + i * 40, 'font-size': 22, fill: '#1b2430' }, t);
+});
+</script>
+</body></html>

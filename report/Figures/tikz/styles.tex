@@ -1,0 +1,34 @@
+% Shared diagram style (same visual language as the system block diagram, Figure 4.2):
+% white cards with a coloured top bar and icon, dotted stage regions, thick triangle arrows.
+\definecolor{sbgray}{RGB}{80,80,80}
+\definecolor{sbblue}{RGB}{20,60,200}
+\definecolor{sbred}{RGB}{200,30,30}
+\definecolor{sbgreen}{RGB}{120,180,20}
+\definecolor{sbgold}{RGB}{200,160,20}
+
+% Large block with title and description (Figure 4.2)
+\newcommand{\sysblock}[6]{%
+  \node[draw=#2, line width=0.9pt, fill=white, minimum width=33mm, minimum height=24mm, inner sep=2mm, text width=31mm, align=center, #6] (#1) {%
+    \raisebox{-0.5ex}{\color{#2}\Large #3}\\[1mm]{\bfseries #4}\\[0.8mm]{\scriptsize #5}};
+  \fill[#2] (#1.north west) rectangle ([yshift=-1.4mm]#1.north east);}
+\newcommand{\sysnum}[3]{\node[circle, fill=#2, text=white, font=\scriptsize\bfseries, inner sep=1.2pt, minimum size=4.2mm] at (#1.north west) {#3};}
+
+% Letter badge linking a flowchart step to its worked example: either {x}{y}{letter} in cm, or {anchor}{}{letter}
+\newcommand{\linknum}[3]{\def\ltmp{#2}\ifx\ltmp\empty\node[circle, fill=sbgold!85!black, text=white, font=\scriptsize\bfseries, inner sep=1.2pt, minimum size=4.2mm] at (#1) {#3};\else\node[circle, fill=sbgold!85!black, text=white, font=\scriptsize\bfseries, inner sep=1.2pt, minimum size=4.2mm] at (#1,#2) {#3};\fi}
+
+% Compact flowchart card: name, colour, icon, text, options
+\newcommand{\fcard}[5]{%
+  \node[draw=#2, line width=0.9pt, fill=white, minimum width=34mm, minimum height=10mm, text width=32mm, align=center, font=\footnotesize, inner sep=1.6mm, execute at begin node={\hyphenpenalty=10000\exhyphenpenalty=10000}, #5] (#1) {{\color{#2}#3}\enspace #4};
+  \fill[#2] (#1.north west) rectangle ([yshift=-1.3mm]#1.north east);}
+% Decision: name, colour, text, options
+\newcommand{\fdec}[4]{\node[diamond, aspect=2.3, draw=#2, line width=0.9pt, fill=white, text width=22mm, align=center, font=\footnotesize, inner sep=2pt, execute at begin node={\hyphenpenalty=10000}, #4] (#1) {#3};}
+% Terminal: name, colour, text, options
+\newcommand{\fterm}[4]{\node[rounded corners=4.5mm, draw=#2, line width=0.9pt, fill=#2!12, minimum width=26mm, minimum height=9mm, font=\footnotesize\bfseries, align=center, #4] (#1) {#3};}
+
+\tikzset{
+  farr/.style={->, line width=1.1pt, >={Triangle[length=2.2mm,width=2.2mm]}},
+  fline/.style={line width=1.1pt},
+  flab/.style={font=\scriptsize\bfseries, fill=white, inner sep=1pt},
+  freg/.style={draw=#1, dotted, line width=1.1pt, fill=#1!5, inner sep=4mm},
+  freglab/.style={anchor=south west, font=\small},
+}

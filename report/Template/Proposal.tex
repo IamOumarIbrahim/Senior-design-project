@@ -1,0 +1,181 @@
+\documentclass[12pt]{report}
+
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{newtxtext,newtxmath}            % Times New Roman, as required by the template
+\usepackage{graphicx}
+\setlength{\marginparwidth}{2cm}
+\usepackage{todonotes}
+\usepackage{fancyhdr}
+\usepackage{setspace}
+\usepackage{longtable}
+\usepackage{caption}
+\usepackage[margin=1in]{geometry}
+\usepackage{titlesec}
+\usepackage{changes}
+\usepackage{color,soul}
+\usepackage{subcaption}
+\usepackage{tabularx}
+\usepackage{booktabs}
+\usepackage{multirow}
+\usepackage{pdfpages}
+\usepackage{rotating}
+\usepackage{tikz}
+\usepackage{pgf-pie}
+\usepackage{pgfplots}
+\pgfplotsset{compat=1.18}
+\usepackage{pgfgantt}
+\usepackage{fontawesome5}
+\usepackage{algorithm}
+\usepackage{algpseudocode}
+\usepackage{xcolor}
+\usepackage[numbers]{natbib}          % choose [numbers] or [authoryear]
+\usepackage[acronym]{glossaries}
+\makeglossaries                             % REQUIRED for \printglossary (indexed)
+\usepackage{array,colortbl}
+
+\usetikzlibrary{shapes.geometric, arrows.meta, positioning, fit, backgrounds, calc, decorations.pathreplacing}
+
+\definecolor{morange}{rgb}{0.8,0.2,0}
+\definecolor{mblue}{rgb}{0,0.1,0.8}
+\definecolor{mgreen}{rgb}{0,0.8,0.1}
+\definecolor{mred}{rgb}{1,0,0}
+
+% Report palette (also used in Chapter 1)
+\definecolor{own1}{RGB}{31, 119, 180}
+\definecolor{own2}{RGB}{78, 168, 222}
+\definecolor{own3}{RGB}{142, 202, 230}
+\definecolor{oth1}{RGB}{230, 111, 81}
+\definecolor{oth2}{RGB}{244, 162, 97}
+\definecolor{out1}{RGB}{42, 157, 143}
+\definecolor{out2}{RGB}{104, 187, 149}
+\definecolor{out3}{RGB}{178, 222, 192}
+
+\input{Figures/tikz/styles}
+
+\setglossarystyle{long}
+\newcommand{\edit}[1]{{\leavevmode\color{mblue}{#1}}}
+\newcommand{\kais}[1]{{\color{morange}{{(\bf Kais:} #1)}}}
+
+\titleformat{\chapter}[hang]{\bfseries\Large}{Chapter \thechapter}{2em}{}
+% let text and floats share pages (v6: fewer half-empty float pages)
+\renewcommand{\topfraction}{0.9}
+\renewcommand{\bottomfraction}{0.8}
+\renewcommand{\textfraction}{0.07}
+\renewcommand{\floatpagefraction}{0.8}
+\setcounter{topnumber}{3}
+\setcounter{bottomnumber}{2}
+\setcounter{totalnumber}{5}
+\setcounter{secnumdepth}{3}
+\setcounter{tocdepth}{2}
+\onehalfspacing
+
+\pagestyle{fancy}
+\fancyhf{}
+\fancyfoot[C]{\thepage}
+\renewcommand{\headrulewidth}{0pt}
+\fancypagestyle{plain}{\fancyhf{}\fancyfoot[C]{\thepage}\renewcommand{\headrulewidth}{0pt}}
+
+\renewcommand{\bibname}{References}
+\usepackage[hidelinks]{hyperref}          % LOAD HYPERREF LAST
+\input{Template/acronyms}
+
+% Begin document
+\begin{document}
+
+% Title Page
+\begin{titlepage}
+    \centering
+    \includegraphics[width=0.25\textwidth]{Figures/Logo_UoS.png}
+
+    \textsc{\Large University of Sharjah\\[2pt] College of Computing and Informatics\\
+    Department of Computer Engineering}\\[1.2cm]
+
+    \textsc{\Large Senior Design Project Report}\\[0.2cm]
+    {\large Phase 1 -- Senior Design Project 1}\\[0.5cm]
+
+    \rule{\linewidth}{0.5mm} \\[0.4cm]
+    {\LARGE \bfseries Edge-Cloud Driver Monitoring with Improved User Experience}\\[0.4cm]
+    \rule{\linewidth}{0.5mm} \\[1.2cm]
+
+    \begin{flushleft}
+    \textbf{Project Group 34:}\\[2pt]
+    \begin{tabular}{@{}ll@{}}
+    U22200741 & Oumar Mamoun Ibrahim \\
+    U23101327 & Abdullah Jafar Abdelhamid \\
+    U23104246 & Faris Munadhil Ahmed Alagha \\
+    U20101649 & Mohamed Ahmed Saad Khafagy \\
+    \end{tabular}\\[0.6cm]
+    \textbf{Supervisor:} Dr. Mohamad Khairi Bin Ishak \\
+    \textbf{Term:} Fall 2026--2027
+    \end{flushleft}
+
+    \vfill
+
+     \textbf{Date:} \today
+    \vspace*{1cm}
+
+\end{titlepage}
+
+\pagenumbering{roman}
+\setcounter{page}{2}
+
+\section*{Acknowledgement}
+\addcontentsline{toc}{chapter}{Acknowledgement}
+The team thanks Dr. Mohamad Khairi Bin Ishak and Maha Ala'Eddin Nazmi for their guidance, mentorship and assistance on making this possible. We also extend our gratitude to the faculty of the University of Sharjah for providing us with an opportunity to work on a project we believe will benefit the livelihood of others.
+\newpage
+% Abstract
+\chapter*{Abstract}
+
+\addcontentsline{toc}{chapter}{Abstract}
+Nuisance in \glspl{dms} through alerts, whether true or false, leads drivers to disable, circumvent and distrust these systems, exposing drowsy and distracted drivers to a life-threatening risk. The root lies in how these systems must be optimised for \gls{ux} while still maintaining driver safety. We review previous works and their known limitations, and design a system through the living lens of a tired working person, whose main priority is to reach their destination safely. A webcam feeds a real-time video stream to an object detection model optimised for a Raspberry Pi 5, where pre- and post-processing filter false detections. A confirmed detection cascades downstream into an alert that matches the associated risk, delivered through light, sound and an explained voice message. Confirmed events are logged on the device and later uploaded to a web dashboard that gives the driver tips for safer driving, while no video ever leaves the device. The system is evaluated on a subject-disjoint benchmark, measuring precision, recall and false alarms per hour.
+
+In this first phase, we deliver a complete design rather than a finished product. We specify 26 testable requirements, compare five whole-system alternatives against weighted criteria, and select \gls{yolo}11n on a Raspberry Pi 5 with an AI HAT+, after estimating that the CPU alone reaches only about 7 \gls{fps}. Our four preliminary studies on public data show that \gls{yolo}11n leads nano detectors under subject-disjoint testing, that 40\% hard-mined negatives cut false positives by 71\%, and that cutoffs tuned on some drivers do not hold for others, motivating per-driver calibration. The targets are 25 to 40 \gls{fps}, a latency under 100 ms, a per-class recall of at least 0.90 and fewer than 10 false alarms per hour, within a budget of 2725 \gls{aed}. We have since built the full software and tested it on a PC, where all 194 automated checks pass and a replay of a held-out driver ran from video to the dashboard over \gls{tls}, catching all four phone cues and two of four drinking cues with no detector false alerts. We also recorded four pilot sessions with three of the authors in real cars, by day and by night. Results on the Raspberry Pi, shown on a desk rig in SDP~2, remain for the next phase.
+
+
+\clearpage
+\addcontentsline{toc}{chapter}{Abstract (Arabic)}
+\includepdf[pages=1, pagecommand={\thispagestyle{plain}}]{Template/abstract_ar.pdf}
+
+% Table of Contents, List of Figures, Tables
+\tableofcontents
+\newpage
+\listoffigures
+\addcontentsline{toc}{chapter}{List of Figures}
+\listoftables
+\addcontentsline{toc}{chapter}{List of Tables}
+\newpage
+\printglossary[type=\acronymtype, title={Symbols, Keywords, and Abbreviations}, toctitle={Symbols, Keywords, and Abbreviations}]
+\newpage
+
+\pagenumbering{arabic}
+
+\chapter{Introduction}
+\input{Chapters/Chapter_1}
+
+\chapter{Literature Review}
+\input{Chapters/Chapter_2}
+
+\chapter{Technical Background}
+\input{Chapters/Chapter_3}
+
+\chapter{Proposed Solution}
+\input{Chapters/Chapter_4}
+
+\chapter{Research Methodology}
+\input{Chapters/Chapter_5}
+
+\chapter{Implementation and Results So Far}
+\input{Chapters/Chapter_Results}
+
+\chapter{Conclusion and Recommendations}
+\input{Chapters/Chapter_6}
+
+\bibliographystyle{unsrt}
+\addcontentsline{toc}{chapter}{References}
+\bibliography{Template/references}
+
+\chapter{Appendix}
+\input{Chapters/Chapter_7}
+
+\end{document}

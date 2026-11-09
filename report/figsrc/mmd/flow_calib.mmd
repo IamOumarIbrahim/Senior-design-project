@@ -1,0 +1,9 @@
+flowchart LR
+  A([New driver]) --> B[Prompt: sit normally]
+  B --> C[Run detector at 0.05<br>for 20 s, 600 frames]
+  C --> D{Frames above default<br>cutoff > 10%?}
+  D -- yes --> E[Keep defaults<br>ask to redo] --> B
+  D -- no --> F[Per class: P99 + 0.05]
+  F --> G[Clamp to floor and 0.85]
+  G --> H[Store open-eye EAR]
+  H --> I([Save cutoffs])

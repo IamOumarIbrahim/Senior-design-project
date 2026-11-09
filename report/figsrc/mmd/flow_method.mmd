@@ -1,0 +1,13 @@
+flowchart LR
+  S[Specify] --> V[Survey alternatives] --> W[Score and select] --> P[Prototype]
+  P --> C
+  subgraph ML [Model loop]
+    direction TB
+    C[Collect clips] --> T[Train / fine-tune] --> E[Evaluate on val]
+    E --> A[Error analysis]
+    A --> H[Record hard negatives]
+    H --> T
+  end
+  E --> M[Measure on Pi 5] --> R{Meets spec?}
+  R -- no --> A
+  R -- yes --> F[Freeze and test once]

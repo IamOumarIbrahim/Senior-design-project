@@ -1,0 +1,91 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>DriveSafe Tablet</title>
+<script src="icons.js"></script>
+<style>
+  :root { --bg:#f6f8fb; --panel:#fff; --ink:#1b2430; --muted:#6b7686; --line:#e8edf3; --soft:#eef1f5;
+          --blue:#2f80ed; --blueBg:#eaf2fe; --orange:#f5a524; --orangeBg:#fff4e2; --purple:#7b61ff; --purpleBg:#f0edff;
+          --red:#eb5757; --redBg:#fdecec; --green:#27ae60; --greenBg:#e6f6ec; --teal:#22a39a; --tealBg:#e4f6f4; }
+  body.dark { --bg:#0f141b; --panel:#171e27; --ink:#e9eef5; --muted:#8c98a8; --line:#253141; --soft:#1f2834;
+          --blueBg:#162a45; --orangeBg:#33270f; --purpleBg:#231f3f; --redBg:#3a1b1b; --greenBg:#13301f; --tealBg:#10302d; }
+  * { box-sizing:border-box; margin:0; padding:0; }
+  html,body { width:1024px; height:600px; overflow:hidden; }
+  body { background:var(--bg); color:var(--ink); font-family:"Inter","Segoe UI",system-ui,sans-serif; }
+  .top { height:54px; display:flex; align-items:center; justify-content:space-between; padding:0 20px; background:var(--panel); border-bottom:1px solid var(--line); }
+  .brand { display:flex; gap:10px; align-items:center; font-weight:700; font-size:17px; }
+  .brand .logo { width:34px; height:34px; border-radius:50%; background:var(--blueBg); display:flex; align-items:center; justify-content:center; }
+  .chips { display:flex; gap:10px; }
+  .chip { display:flex; gap:7px; align-items:center; font-size:13px; color:var(--muted); background:var(--soft); border-radius:18px; padding:6px 12px; }
+  .main { display:grid; grid-template-columns:1fr 330px; gap:14px; padding:14px 18px; height:546px; }
+  .card { background:var(--panel); border:1px solid var(--line); border-radius:16px; padding:16px 18px; }
+  .hero { display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center; }
+  .badge { width:200px; height:200px; border-radius:50%; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:6px; }
+  .badge .t { font-size:34px; font-weight:700; }
+  .badge .s { font-size:13px; color:var(--muted); }
+  .msg { margin-top:18px; font-size:19px; line-height:1.38; max-width:520px; }
+  .msg .ar { display:block; direction:rtl; color:var(--muted); font-size:18px; margin-top:6px; }
+  .tiers { display:flex; gap:8px; margin-top:16px; align-items:center; font-size:12px; color:var(--muted); }
+  .tiers span { width:64px; height:7px; border-radius:4px; background:var(--soft); }
+  h3 { font-size:14px; font-weight:600; margin-bottom:8px; }
+  .det { display:flex; gap:10px; align-items:center; padding:8px 0; border-bottom:1px solid var(--line); }
+  .det:last-child { border:none; }
+  .det .ic { width:32px; height:32px; border-radius:50%; display:flex; align-items:center; justify-content:center; flex:none; }
+  .det .t { flex:1; font-size:14px; } .det .t small { display:block; color:var(--muted); font-size:12px; }
+  .det .tm { font-size:12px; color:var(--muted); }
+  .side { display:flex; flex-direction:column; gap:12px; }
+  .stat { display:flex; justify-content:space-between; font-size:14px; color:var(--muted); padding:4px 0; }
+  .stat b { color:var(--ink); }
+  .btns { display:flex; gap:10px; margin-top:auto; }
+  .btn { flex:1; text-align:center; padding:12px 0; border-radius:12px; font-size:14px; font-weight:600; border:1px solid var(--line); background:var(--panel); }
+  .btn.p { background:var(--blue); color:#fff; border:none; }
+  .poi { display:flex; gap:10px; align-items:center; font-size:14px; margin-top:6px; }
+  .poi .ic { width:34px; height:34px; border-radius:10px; background:var(--orangeBg); display:flex; align-items:center; justify-content:center; }
+  .prog { width:100%; height:8px; background:var(--soft); border-radius:4px; margin:8px 0 4px; overflow:hidden; }
+  .prog i { display:block; height:100%; background:var(--blue); border-radius:4px; }
+</style>
+</head>
+<body>
+<div class="top">
+  <div class="brand"><div class="logo" id="logo"></div>DriveSafe<span style="font-weight:400;color:var(--muted);font-size:14px;margin-left:8px" id="drv">Driver 2 · PIN</span></div>
+  <div class="chips" id="chips"></div>
+</div>
+<div class="main" id="main"></div>
+<script>
+const q=new URLSearchParams(location.search), theme=q.get('theme')||'light', state=q.get('state')||'ok';
+document.body.classList.add(theme);
+const C={blue:'#2f80ed',orange:'#f5a524',purple:'#7b61ff',red:'#eb5757',green:'#27ae60',teal:'#22a39a',muted:'#8c98a8'};
+document.getElementById('logo').innerHTML=icon('car',20,C.blue,2);
+const clock=theme==='dark'?'21:47':'14:32';
+document.getElementById('chips').innerHTML=
+ `<div class="chip">${icon('cam',15,C.green,2)}Camera OK · 98%</div><div class="chip">${icon('cloud',15,C.muted,2)}Sync after trip</div><div class="chip" style="color:var(--ink);font-weight:600">${clock}</div>`;
+let hero, side;
+const det=(ic,col,bg,t,s,tm)=>`<div class="det"><div class="ic" style="background:var(${bg})">${icon(ic,16,col,2)}</div><div class="t">${t}<small>${s}</small></div><div class="tm">${tm}</div></div>`;
+if(state==='cal'){
+ hero=`<div class="card hero"><div class="badge" style="border:12px solid var(--blueBg);border-top-color:${C.blue};border-right-color:${C.blue}"><div class="t" style="color:${C.blue};font-size:48px">12 s</div><div class="s">of 20 s</div></div>
+ <div class="msg">Sit normally and look at the road.<br><span style="color:var(--muted);font-size:16px">We are learning your neutral face to set your alert levels.</span><span class="ar">اجلس بشكل طبيعي وانظر إلى الطريق</span></div></div>`;
+ side=`<div class="card"><h3>New driver setup</h3><div class="stat">Driver<b>Driver 2</b></div><div class="stat">Frames collected<b>362 / 600</b></div><div class="prog"><i style="width:60%"></i></div>
+ <div class="stat">Detections at 0.05<b>0</b></div><div class="stat">Default cutoffs<b>0.50 – 0.55</b></div></div>
+ <div class="card" style="font-size:14px;line-height:1.5;color:var(--muted)"><h3 style="color:var(--ink)">How it works</h3>Your cutoff per class becomes the 99th percentile of your neutral scores plus 0.05, kept between the default and 0.85. Too many detections? Defaults are kept and you are asked to repeat.</div>
+ <div class="btns"><div class="btn">Cancel</div><div class="btn p">Restart</div></div>`;
+} else if(state==='drowsy'){
+ hero=`<div class="card hero"><div class="badge" style="background:var(--orangeBg);border:12px solid ${C.orange}">${icon('zzz',40,C.orange,2.2)}<div class="t" style="color:${C.orange}">Drowsy</div><div class="s">Tier 2 · voice prompt</div></div>
+ <div class="msg"><b>Yawning detected 3 times in the last 5 minutes.</b> Consider a short break.<span class="ar">تم رصد التثاؤب ٣ مرات خلال آخر ٥ دقائق</span></div>
+ <div class="tiers">Tier <span style="background:${C.orange}"></span><span style="background:${C.orange}"></span><span></span></div></div>`;
+ side=`<div class="card"><h3>Recent detections</h3>${det('zzz',C.orange,'--orangeBg','Yawning','3rd in 5 min','21:46')}${det('mouth',C.orange,'--orangeBg','Hand over mouth','covering a yawn','21:43')}${det('zzz',C.orange,'--orangeBg','Yawning','','21:42')}</div>
+ <div class="card"><h3>This trip</h3><div class="stat">Drive time<b>1 h 52 min</b></div><div class="stat">Alerts<b>6</b></div>
+ <div class="poi"><div class="ic">${icon('pin',18,C.orange,2)}</div><div>Rest stop · 4.2 km ahead<br><span style="color:var(--muted);font-size:12px">from paired phone location</span></div></div></div>
+ <div class="btns"><div class="btn">Dismiss</div><div class="btn p">Navigate</div></div>`;
+} else {
+ hero=`<div class="card hero"><div class="badge" style="background:var(--greenBg);border:12px solid ${C.green}">${icon('shield',40,C.green,2.2)}<div class="t" style="color:${C.green}">Attentive</div><div class="s">No active alerts</div></div>
+ <div class="msg">All good. Keep your eyes on the road.<span class="ar">كل شيء على ما يرام</span></div>
+ <div class="tiers">Tier <span></span><span></span><span></span></div></div>`;
+ side=`<div class="card"><h3>Recent detections</h3>${det('cup',C.teal,'--tealBg','Drinking','gentle chime','14:18')}${det('phone',C.purple,'--purpleBg','Phone use','voice prompt','13:57')}${det('zzz',C.orange,'--orangeBg','Yawning','gentle chime','13:41')}</div>
+ <div class="card"><h3>This trip</h3><div class="stat">Drive time<b>48 min</b></div><div class="stat">Alerts<b>3</b></div><div class="stat">Next break suggested<b>in 42 min</b></div></div>
+ <div class="btns"><div class="btn">Recalibrate</div><div class="btn p">Settings</div></div>`;
+}
+document.getElementById('main').innerHTML=hero+`<div class="side">${side}</div>`;
+</script>
+</body>
+</html>
