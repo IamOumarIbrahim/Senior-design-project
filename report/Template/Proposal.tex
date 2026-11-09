@@ -30,7 +30,7 @@
 \usepackage{algpseudocode}
 \usepackage{xcolor}
 \usepackage[numbers]{natbib}          % choose [numbers] or [authoryear]
-\usepackage[acronym]{glossaries}
+\usepackage[acronym,toc]{glossaries}
 \makeglossaries                             % REQUIRED for \printglossary (indexed)
 \usepackage{array,colortbl}
 
@@ -66,8 +66,13 @@
 \setcounter{topnumber}{3}
 \setcounter{bottomnumber}{2}
 \setcounter{totalnumber}{5}
-\setcounter{secnumdepth}{3}
-\setcounter{tocdepth}{2}
+% v12: only chapters (x) and sections (x.y) are numbered and listed
+\setcounter{secnumdepth}{1}
+\setcounter{tocdepth}{1}
+\titleformat{\subsection}{\normalfont\large\bfseries}{}{0pt}{}
+\titlespacing*{\subsection}{0pt}{2.2ex plus .6ex minus .2ex}{0.8ex plus .2ex}
+\titleformat{\subsubsection}[runin]{\normalfont\normalsize\bfseries}{}{0pt}{}[.]
+\titlespacing*{\subsubsection}{0pt}{1.6ex plus .5ex minus .2ex}{0.6em}
 \onehalfspacing
 
 \pagestyle{fancy}
@@ -77,7 +82,20 @@
 \fancypagestyle{plain}{\fancyhf{}\fancyfoot[C]{\thepage}\renewcommand{\headrulewidth}{0pt}}
 
 \renewcommand{\bibname}{References}
-\usepackage[hidelinks]{hyperref}          % LOAD HYPERREF LAST
+\usepackage{xurl}                          % v11: long URLs break in the references
+\usepackage[nospace]{varioref}            % v11: page hints on far references
+\usepackage[backref=page]{hyperref}       % LOAD HYPERREF LAST
+\definecolor{linkblue}{RGB}{20,60,140}
+\definecolor{citegreen}{RGB}{15,110,70}
+\hypersetup{colorlinks=true, linkcolor=linkblue, citecolor=citegreen,
+            urlcolor=linkblue, filecolor=linkblue}
+\renewcommand*{\glstextformat}[1]{\textcolor{black}{#1}} % acronyms stay black
+% bibliography back-links: "(Cited on p. 5, 12.)"
+\renewcommand*{\backrefalt}[4]{\ifcase #1 \or
+  \ (Cited on p.~#2.)\else \ (Cited on pp.~#2.)\fi}
+\renewcommand*{\backreftwosep}{, }
+\renewcommand*{\backreflastsep}{, }
+\makeatletter\input{Template/refmacros}\makeatother
 \input{Template/acronyms}
 
 % Begin document
@@ -138,11 +156,11 @@ In this first phase, we deliver a complete design rather than a finished product
 \includepdf[pages=1, pagecommand={\thispagestyle{plain}}]{Template/abstract_ar.pdf}
 
 % Table of Contents, List of Figures, Tables
-\tableofcontents
+{\hypersetup{linkcolor=black}\tableofcontents}
 \newpage
-\listoffigures
+{\hypersetup{linkcolor=black}\listoffigures}
 \addcontentsline{toc}{chapter}{List of Figures}
-\listoftables
+{\hypersetup{linkcolor=black}\listoftables}
 \addcontentsline{toc}{chapter}{List of Tables}
 \newpage
 \printglossary[type=\acronymtype, title={Symbols, Keywords, and Abbreviations}, toctitle={Symbols, Keywords, and Abbreviations}]
@@ -160,6 +178,7 @@ In this first phase, we deliver a complete design rather than a finished product
 \input{Chapters/Chapter_3}
 
 \chapter{Proposed Solution}
+\label{ch:solution}
 \input{Chapters/Chapter_4}
 
 \chapter{Research Methodology}
@@ -172,6 +191,7 @@ In this first phase, we deliver a complete design rather than a finished product
 \input{Chapters/Chapter_6}
 
 \bibliographystyle{unsrt}
+\clearpage\phantomsection                  % v11: TOC page and link point at the References page
 \addcontentsline{toc}{chapter}{References}
 \bibliography{Template/references}
 

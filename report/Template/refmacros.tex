@@ -1,0 +1,39 @@
+% v11: references a reader can follow without hunting.
+% Loaded after hyperref (see Proposal.tex).
+%
+%  \figref{fig:x}  ->  "Figure 4.4", the whole phrase is a link, and
+%                      " (p. 27)" is added only when the target is not on
+%                      this page or the page next to it (varioref).
+%  \tabref \secref \chapref \appref  work the same way.
+%  \tablesources{r32,r34}  ->  a small "Sources:" key under a table:
+%                      [32] Abouelnaga et al., 2017, Real-time Distracted...
+%  Short keys come from Template/refshort.tex (tools/make_refshort.py).
+
+% ---- page hints (varioref) -------------------------------------------
+\renewcommand{\reftextfaraway}[1]{on p.~\pageref{#1}}
+\newcommand{\v@hint}[1]{\vpageref[\unskip][\unskip]{#1}}
+
+\newcommand{\v@ref}[2]{\hyperref[#2]{#1~\ref*{#2}}\v@hint{#2}}
+\newcommand{\figref}[1]{\v@ref{Figure}{#1}}
+\newcommand{\tabref}[1]{\v@ref{Table}{#1}}
+\newcommand{\secref}[1]{\v@ref{Section}{#1}}
+\newcommand{\chapref}[1]{\v@ref{Chapter}{#1}}
+\newcommand{\appref}[1]{\v@ref{Appendix}{#1}}
+
+% ---- short reference keys --------------------------------------------
+\newcommand{\defrefshort}[2]{\expandafter\def\csname refshort@#1\endcsname{#2}}
+\newcommand{\refshort}[1]{%
+  \ifcsname refshort@#1\endcsname\csname refshort@#1\endcsname
+  \else\textbf{??}\fi}
+\input{Template/refshort}
+
+% ---- "Sources:" key under a table ------------------------------------
+\newif\if@srcfirst
+\newcommand{\tablesources}[1]{%
+  \par\vspace{3pt}%
+  \begin{minipage}{\linewidth}\footnotesize\raggedright
+  \textit{Sources:}\@srcfirsttrue
+  \@for\src@k:=#1\do{%
+    \if@srcfirst\@srcfirstfalse\else;\fi\space
+    \mbox{[\citenum{\src@k}]}~\refshort{\src@k}}.%
+  \end{minipage}\par}

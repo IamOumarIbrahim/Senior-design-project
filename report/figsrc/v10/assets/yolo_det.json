@@ -1,0 +1,121 @@
+{
+ "detections": [
+  {
+   "box": [
+    0.0003,
+    0.3746,
+    0.2826,
+    0.7947
+   ],
+   "cls": "phone_use",
+   "score": 0.773
+  }
+ ],
+ "features": {
+  "b320": {
+   "shape": [
+    16,
+    320,
+    320
+   ],
+   "channels": [
+    5,
+    11,
+    8,
+    9
+   ]
+  },
+  "b160": {
+   "shape": [
+    32,
+    160,
+    160
+   ],
+   "channels": [
+    9,
+    20,
+    17,
+    6
+   ]
+  },
+  "b80": {
+   "shape": [
+    128,
+    80,
+    80
+   ],
+   "channels": [
+    45,
+    1,
+    100,
+    25
+   ]
+  },
+  "b40": {
+   "shape": [
+    128,
+    40,
+    40
+   ],
+   "channels": [
+    62,
+    89,
+    40,
+    109
+   ]
+  },
+  "b20": {
+   "shape": [
+    256,
+    20,
+    20
+   ],
+   "channels": [
+    16,
+    9,
+    247,
+    212
+   ]
+  },
+  "n80": {
+   "shape": [
+    64,
+    80,
+    80
+   ],
+   "channels": [
+    14,
+    27,
+    59,
+    19
+   ]
+  },
+  "n40": {
+   "shape": [
+    128,
+    40,
+    40
+   ],
+   "channels": [
+    4,
+    71,
+    78,
+    69
+   ]
+  },
+  "n20": {
+   "shape": [
+    256,
+    20,
+    20
+   ],
+   "channels": [
+    103,
+    52,
+    68,
+    213
+   ]
+  }
+ },
+ "weights": "C:\\Dev\\repos\\Public repos\\lightweight-driver-behavior-detection\\DMS-Eval\\RESULTS_TO_MIGRATE\\training_runs\\yolo11n_seed13\\weights\\best.pt"
+}

@@ -1,9 +1,9 @@
 @echo off
-rem Clean all LaTeX temp files, then build SDP1_Report_Group34_v9.pdf from scratch.
+rem Clean all LaTeX temp files, then build SDP1_Report_Group34_v12.pdf from scratch.
 rem Double-click this file, or run it from any folder.
 setlocal
 cd /d "%~dp0"
-set "J=SDP1_Report_Group34_v9"
+set "J=SDP1_Report_Group34_v12"
 set "TEXINPUTS=.;./Template;"
 
 echo === Cleaning temp files ===
@@ -12,6 +12,9 @@ for %%E in (acn acr alg aux bbl blg glg glo gls ist loc lof log lot out soc toc 
 )
 if exist "Template\abstract_ar.aux" del /q "Template\abstract_ar.aux"
 if exist "Template\abstract_ar.log" del /q "Template\abstract_ar.log"
+
+echo === [0/5] Short reference keys (tools\make_refshort.py) ===
+where python >nul 2>&1 && python tools\make_refshort.py
 
 echo === [1/5] Arabic abstract (lualatex) ===
 pushd Template
@@ -30,6 +33,8 @@ echo === [4/5] pdflatex pass 2 ===
 pdflatex -interaction=nonstopmode -jobname=%J% Template/Proposal.tex >nul 2>&1
 
 echo === [5/5] pdflatex pass 3 ===
+pdflatex -interaction=nonstopmode -jobname=%J% Template/Proposal.tex >nul 2>&1
+echo === [5/5] pdflatex pass 4 (bibliography back-links) ===
 pdflatex -interaction=nonstopmode -jobname=%J% Template/Proposal.tex >nul 2>&1
 
 echo.

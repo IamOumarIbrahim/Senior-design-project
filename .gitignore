@@ -39,3 +39,10 @@ frames/
 *.synctex.gz
 *.fls
 *.fdb_latexmk
+
+# Old report drafts and preview renders (not used by the report)
+report/figsrc/out/
+report/figsrc/mmd/*.err
+report/Template/*.aux
+report/Template/*.log
+report/*.brf

@@ -1,59 +1,132 @@
-# DriveSafe - Edge-Cloud Driver Monitoring
+<h1 align="center">DriveSafe</h1>
+<p align="center"><b>Edge-Cloud Driver Monitoring with Improved User Experience</b><br>
+A camera watches the driver, the Pi warns only when the cue is real. All video stays in the car.</p>
 
-Senior Design Project, Group 34, University of Sharjah. Supervisor: Dr. Mohamad Khairi Bin Ishak.
+<p align="center">
+<a href="report/SDP1_Report_Group34_v12.pdf"><img alt="Read the report (PDF)" src="https://img.shields.io/badge/Read%20report-PDF-b31b1b?style=for-the-badge&logo=latex&logoColor=white"></a>
+</p>
 
-| Student | ID |
-| --- | --- |
-| Oumar Mamoun Ibrahim | U22200741 |
-| Abdullah Jafar Abdelhamid | U23101327 |
-| Faris Munadhil Ahmed Alagha | U23104246 |
-| Mohamed Ahmed Saad Khafagy | U20101649 |
+<p align="center">
+<img alt="Python" src="https://img.shields.io/badge/python-3.10%2B-3776ab">
+<img alt="Model" src="https://img.shields.io/badge/model-YOLO11n-e07b2a">
+<img alt="Edge" src="https://img.shields.io/badge/edge-Raspberry%20Pi%205%20%2B%20AI%20HAT%2B-c51a4a">
+<img alt="Checks" src="https://img.shields.io/badge/checks-194%20passing-2e7d32">
+<img alt="Budget" src="https://img.shields.io/badge/budget-2725%20AED-f2c94c">
+</p>
 
-A camera watches the driver, YOLO11n finds yawning, hand over mouth, drinking and phone use on the Pi, and the system warns the driver only when the cue is real. All video stays in the car, only event records are uploaded after the trip.
+<p align="center"><img src="docs/cover.jpg" alt="Report cover: Edge-Cloud Driver Monitoring" width="420"></p>
 
-## Folders
+## How it works
 
-| Folder | What is in it |
-| --- | --- |
-| `edge/` | everything that runs on the Pi, start with `main.py` |
-| `server/` | upload API, database and post-trip tips (FastAPI) |
-| `dashboard/` | web dashboard (React) |
-| `dataset/` | recording, frames, folds, label checks, hard negatives |
-| `training/` | training, pruning, export, Pi benchmark, Hailo compile |
-| `tests/` | one script for each group of tests from Chapter 5 |
-| `deploy/` | Pi setup, service and voice file generator |
-| `sounds/` `voice/` `models/` | alert sounds, English and Arabic voice, model weights |
-
-## Run it on a laptop
-
-```bash
-pip install -r requirements.txt
-cd tests
-python make_replay.py
-cd ../edge
-python main.py replay ../data/replay_subject_05.mp4
+```mermaid
+flowchart LR
+    A([Driver-facing<br>camera]):::in --> B[YOLO11n on<br>Pi 5 + AI HAT+]:::edge
+    B --> C[EMA, tiers and<br>per-driver cutoffs]:::edge
+    C --> D[Voice + light<br>alert in the car]:::alert
+    C --> E[Event records<br>no video]:::edge
+    E -->|after the trip, TLS| F[Server<br>FastAPI]:::cloud
+    F --> G([Dashboard and<br>post-trip tips]):::out
+    classDef in fill:#eef3fa,stroke:#1f4e9a,color:#14171c
+    classDef edge fill:#f2c9a0,stroke:#c0752a,color:#14171c
+    classDef alert fill:#ffe8a3,stroke:#d4a017,color:#14171c
+    classDef cloud fill:#d7ecd9,stroke:#2e7d32,color:#14171c
+    classDef out fill:#14285a,stroke:#14285a,color:#ffffff
 ```
 
-The light bar packages only install on the Pi, a laptop skips them. The replay has no sound and no display. Events go in `data/events.db`. `make_replay.py` needs the DMD RGB frames, set `DMS_RGB_DIR` to where they are. DMD has its own licence so the frames are not in this repo.
+YOLO11n finds **yawning, hand over mouth, drinking and phone use**. The eye module adds eye closure, and a blind check catches a covered camera.
 
-On a laptop with a GPU set `DMS_DEVICE=0`. Dont do this with mediapipe installed on Windows, the two together crash CUDA.
+## The system
 
-## Run the server and dashboard
+<table>
+<tr>
+<td width="62%"><img src="report/Figures/ui_dashboard.png" alt="DriveSafe web dashboard"></td>
+<td width="38%"><img src="report/Figures/edge_unit.png" alt="Edge unit"></td>
+</tr>
+<tr>
+<td><b>Web dashboard</b> (<code>dashboard/</code>, <code>server/</code>): drive time, detections per week, hour-of-day heatmap,
+last trip timeline and a post-trip tip. Shown with sample data.</td>
+<td><b>Edge unit</b> (<code>edge/</code>): Raspberry Pi 5 (8 GB), AI HAT+ (Hailo-8, 26 TOPS), active cooler, metal case.</td>
+</tr>
+</table>
+
+## Results at a glance
+
+| Question | Answer |
+|---|---|
+| What is specified? | **26** testable requirements; **5** whole-system alternatives compared on weighted criteria |
+| Which detector? | **YOLO11n** leads nano detectors under subject-disjoint testing |
+| Why the AI HAT+? | The Pi 5 CPU alone reaches only about **7 FPS**; target is **25 to 40 FPS**, latency under **100 ms** |
+| Do hard negatives help? | **40 %** hard-mined negatives cut false positives by **71 %** |
+| Can one cutoff fit everyone? | No. Cutoffs tuned on some drivers do not hold for others, so each driver is calibrated |
+| Does it work end to end? | All **194** automated checks pass on a PC. A held-out driver replay ran from video to the dashboard over TLS: **4 of 4** phone cues, **2 of 4** drinking cues, no detector false alerts |
+| Real cars? | **4** pilot sessions with three of the authors, by day and by night |
+| Left for SDP 2 | On the Pi: per-class recall ≥ **0.90**, fewer than **10** false alarms per hour |
+
+<table>
+<tr>
+<td width="50%"><img src="report/Figures/rs1_yolo11n_examples.png" alt="YOLO11n detections on held-out drivers"></td>
+<td width="50%"><img src="report/Figures/ui_tablet_light.png" alt="In-car tablet screen"></td>
+</tr>
+<tr>
+<td><b>YOLO11n on held-out drivers.</b></td>
+<td><b>In-car screen</b> (<code>edge/tablet_ui.py</code>). Dark and calibration views are in the report.</td>
+</tr>
+</table>
+
+![Pilot recordings: four sessions, three drivers, day and night, three camera positions](report/Figures/pilot/pilot_grid.jpg)
+
+## Install and run
+
+**On a laptop** (replay of a held-out DMD driver):
 
 ```bash
-cd dashboard
-npm install
-npm run build
-cd ../server
+git clone https://github.com/IamOumarIbrahim/Senior-design-project.git
+cd Senior-design-project
 pip install -r requirements.txt
+
+cd tests && python make_replay.py                         # needs DMS_RGB_DIR (DMD frames)
+cd ../edge && python main.py replay ../data/replay_subject_05.mp4
+```
+
+The light bar packages only install on the Pi, a laptop skips them. The replay has no sound and no display.
+Events go in `data/events.db`. DMD has its own licence, so the frames are not in this repo.
+With a GPU set `DMS_DEVICE=0`, but not with mediapipe on Windows: the two together crash CUDA.
+
+**Server and dashboard:**
+
+```bash
+cd dashboard && npm install && npm run build
+cd ../server && pip install -r requirements.txt
 python add_device.py pi5-group34
 python seed_demo.py demo demo1234
-uvicorn app:app --port 8000
+uvicorn app:app --port 8000                               # open http://127.0.0.1:8000
 ```
 
-Open `http://127.0.0.1:8000` and log in with the demo account. Those trips are made up and the page marks them SAMPLE DATA. A real driver gets an account with `python set_password.py driver_id name`.
+Log in with the demo account. Those trips are made up and the page marks them SAMPLE DATA.
+A real driver gets an account with `python set_password.py driver_id name`.
+Without `DATABASE_URL` it uses SQLite; `docker compose up` in `server/` runs it with Postgres.
 
-Without `DATABASE_URL` it uses SQLite. `docker compose up` in `server/` runs it with Postgres.
+**On the Pi:** see `deploy/` for setup, the service and the voice file generator.
+
+## Repository map
+
+| Path | Contents |
+|---|---|
+| `edge/` | Everything that runs on the Pi, start with `main.py` |
+| `server/` | Upload API, database and post-trip tips (FastAPI) |
+| `dashboard/` | Web dashboard (React) |
+| `dataset/` | Recording, frames, folds, label checks, hard negatives |
+| `training/` | Training, pruning, export, Pi benchmark, Hailo compile |
+| `tests/` | One script for each group of tests from Chapter 5 |
+| `deploy/` | Pi setup, service and voice file generator |
+| `sounds/` `voice/` `models/` | Alert sounds, English and Arabic voice, model weights |
+| `report/` | SDP1 report (v12): LaTeX source, figures, figure scripts, PDF |
+
+## Build the report
+
+Needs `pdflatex`, `lualatex` (Arabic abstract), `bibtex` and `makeglossaries`.
+On Windows double-click `report/build_clean.bat`, otherwise run `report/build.sh`.
+Figures are drawn by the scripts in `report/figsrc/` (Python, Blender, Mermaid).
 
 ## Tests
 
@@ -129,4 +202,15 @@ The real number sits between the last two rows because the footage is only 1 fps
 - The dashboard has its own password. The PIN stays in the car.
 - The light bar has one MOSFET so it can only flash. The colours in Table 4.15 show on the display only.
 - Rest stops use the phone location, and the browser only gives that on HTTPS, so the Pi needs a certificate for it.
-# Senior-design-project
+
+## Team
+
+Senior Design Project, Group 34, Computer Engineering, University of Sharjah, Fall 2026–2027.
+Supervisor: **Dr. Mohamad Khairi Bin Ishak**.
+
+| Student | ID |
+|---|---|
+| Oumar Mamoun Ibrahim | U22200741 |
+| Abdullah Jafar Abdelhamid | U23101327 |
+| Faris Munadhil Ahmed Alagha | U23104246 |
+| Mohamed Ahmed Saad Khafagy | U20101649 |

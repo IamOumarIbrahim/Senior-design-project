@@ -44,7 +44,7 @@ Appendix A gives the pseudocode of the core decision loop, Appendix B the design
 \section*{Appendix B: Design changes made during implementation}
 \addcontentsline{toc}{section}{Appendix B: Design changes made during implementation}
 
-Building the software exposed places where the first design contradicted itself or the hardware. Each one is now settled in Chapter 4, and Table \ref{tab:v5-changes} records them. The class, entity-relationship and sequence diagrams of Chapter 4 include these changes.
+Building the software exposed places where the first design contradicted itself or the hardware. Each one is now settled in Chapter 4, and \tabref{tab:v5-changes} records them. The class, entity-relationship and sequence diagrams of Chapter 4 include these changes.
 
 \begin{table}[htbp]
 \centering
@@ -73,7 +73,7 @@ Dashboard login & Uploading a 4-digit \gls{pin} hash would be weak & \glspl{pin}
 \hline
 Power-cut claim & \texttt{synchronous=NORMAL} does not make every commit survive a power cut & Text corrected, value kept until the relay test decides \\
 \hline
-Eye closure & 75\% \gls{ear} fired about 100 times per hour & 50\% \gls{ear}, blink score and head pitch (Section \ref{sec:eye-results}), adding a \texttt{pitch\_rest} column \\
+Eye closure & 75\% \gls{ear} fired about 100 times per hour & 50\% \gls{ear}, blink score and head pitch (\secref{sec:eye-results}), adding a \texttt{pitch\_rest} column \\
 \hline
 \end{tabular}
 \end{table}

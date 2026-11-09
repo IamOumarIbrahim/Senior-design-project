@@ -4,7 +4,7 @@
 
 Distraction is commonly divided into three types \cite{r72,r75}. Visual distraction takes the eyes off the road, manual distraction takes a hand off the wheel, and cognitive distraction takes the mind off driving, with phone use being the clearest example as it combines all three. Drowsiness behaves differently, building up gradually, appearing first as yawning and rubbing of the face, then as longer blinks, and finally as micro-sleeps where the eyes remain closed for a second or more.
 
-We chose four visible cues that a camera can capture reliably (Table \ref{tab:ch3-classes} and Figure \ref{fig:ch3-cues}). Yawning and hand-over-mouth, which is usually a covered yawn, are early signs of fatigue. Drinking and phone use are manual and visual distractions, and phone use alone carries an 800 \gls{aed} fine and four black points in the \gls{uae} \cite{r65}. None of these classes depends on where the head points, ensuring that ordinary mirror checks do not trigger alerts. Eye closure is handled separately through a landmark module (Section \ref{sec:ear}).
+We chose four visible cues that a camera can capture reliably (\tabref{tab:ch3-classes} and \figref{fig:ch3-cues}). Yawning and hand-over-mouth, which is usually a covered yawn, are early signs of fatigue. Drinking and phone use are manual and visual distractions, and phone use alone carries an 800 \gls{aed} fine and four black points in the \gls{uae} \cite{r65}. None of these classes depends on where the head points, ensuring that ordinary mirror checks do not trigger alerts. Eye closure is handled separately through a landmark module (\secref{sec:ear}).
 
 \begin{table}[htbp]
 \centering
@@ -31,20 +31,20 @@ Phone use & Distraction & Manual, visual and cognitive distraction & Needs the p
 \begin{figure}[htbp]
 \centering
 \resizebox{\linewidth}{!}{\input{Figures/tikz/dmd_cues}}
-\caption{The four target classes with their boxes and a negative frame, on DMD frames \cite{r38} (from \cite{rs2}). A covered yawn is labelled hand-over-mouth}
+\caption[The four target classes with their boxes and a negative frame, on DMD frames. A covered yawn is labelled hand-over-mouth]{The four target classes with their boxes and a negative frame, on DMD frames \cite{r38} (from \cite{rs2}). A covered yawn is labelled hand-over-mouth}
 \label{fig:ch3-cues}
 \end{figure}
 
 \subsection{Object detection with CNNs and the YOLO family}
 
-A \gls{cnn} learns small filters that slide over an image and respond to edges, textures and shapes. Stacking many of these layers forms a backbone that turns the image into feature maps at several scales. A neck then mixes these scales so that both small objects, such as a phone at the ear, and large ones, such as an open mouth, are represented, and a head predicts a bounding box, a confidence score and a class for every location. Since many neighbouring locations predict the same object, \gls{nms} keeps the highest-scoring box and removes the others that overlap it above an \gls{iou} threshold. A one-stage detector performs all of this in a single pass, which makes it fast enough for video \cite{r44}. Figure \ref{fig:ch3-02} illustrates this structure.
+A \gls{cnn} learns small filters that slide over an image and respond to edges, textures and shapes. Stacking many of these layers forms a backbone that turns the image into feature maps at several scales. A neck then mixes these scales so that both small objects, such as a phone at the ear, and large ones, such as an open mouth, are represented, and a head predicts a bounding box, a confidence score and a class for every location. Since many neighbouring locations predict the same object, \gls{nms} keeps the highest-scoring box and removes the others that overlap it above an \gls{iou} threshold. A one-stage detector performs all of this in a single pass, which makes it fast enough for video \cite{r44}. \figref{fig:ch3-02} illustrates this structure.
 
 \gls{yolo}11n is the smallest variant of the Ultralytics \gls{yolo}11 family \cite{r45,r46}, with 2.6 million parameters and 6.5 GFLOPs per 640$\times$640 image while reaching 39.5 \gls{map}$_{50-95}$ on \gls{coco}. We rely on transfer learning: the network starts from weights trained on \gls{coco} \cite{r43}, so it already recognises hands, cups and phones, and only needs to learn our four classes from a much smaller dataset.
 
 \begin{figure}[htbp]
 \centering
-\resizebox{\linewidth}{!}{\input{Figures/tikz/yolo_flow}}
-\caption{How \glsentryshort{yolo}11n turns one frame into one box: the backbone shrinks the image into feature maps, the neck mixes fine and coarse maps, three heads guess boxes for small, medium and large objects, and \glsentryshort{nms} keeps the best box}
+\includegraphics[width=\linewidth]{Figures/v10/r4.pdf}
+\caption[How \glsentryshort{yolo}11n turns one frame into one box: the backbone shrinks the image into feature maps, the neck mixes fine and coarse maps, three heads guess boxes for small, medium and large objects, and \glsentryshort{nms} keeps the best box. The feature maps and the output are real, from our trained model on this DMD frame]{How \glsentryshort{yolo}11n turns one frame into one box: the backbone shrinks the image into feature maps, the neck mixes fine and coarse maps, three heads guess boxes for small, medium and large objects, and \glsentryshort{nms} keeps the best box. The feature maps and the output are real, from our trained model on this DMD frame \cite{r38}}
 \label{fig:ch3-02}
 \end{figure}
 
@@ -60,7 +60,7 @@ A detector scores every frame independently, so a single odd frame can produce a
 s_t = \alpha\,x_t + (1-\alpha)\,s_{t-1}, \qquad \alpha = 1 - e^{-\Delta t/\tau}
 \label{eq:ema}
 \end{equation}
-where $\Delta t$ is the measured time since the last frame and $\tau$ is a time constant in seconds. Defining $\alpha$ through $\Delta t$ ensures the filter forgets at the same rate in seconds whether the pipeline runs at 15 or 30 \gls{fps}, as Figure \ref{fig:ch3-ema-weights} shows. A larger $\tau$ suppresses more noise at the cost of a slower response: for a cue that suddenly appears, the smoothed score crosses a cutoff $\theta$ after
+where $\Delta t$ is the measured time since the last frame and $\tau$ is a time constant in seconds. Defining $\alpha$ through $\Delta t$ ensures the filter forgets at the same rate in seconds whether the pipeline runs at 15 or 30 \gls{fps}, as \figref{fig:ch3-ema-weights} shows. A larger $\tau$ suppresses more noise at the cost of a slower response: for a cue that suddenly appears, the smoothed score crosses a cutoff $\theta$ after
 \begin{equation}
 t_\theta = -\tau \ln(1-\theta).
 \label{eq:delay}
@@ -100,7 +100,7 @@ The \gls{ear} of Soukupová and Čech \cite{r35} uses six eye landmarks $p_1$ to
 \begin{equation}
 \mathrm{EAR} = \frac{\lVert p_2-p_6\rVert + \lVert p_3-p_5\rVert}{2\,\lVert p_1-p_4\rVert}.
 \end{equation}
-The \gls{ear} stays roughly constant while the eye is open and drops towards zero as it closes. Since eye shape varies between people, a fixed threshold does not suit every driver, so we take each driver's open-eye value from a 20\,s baseline and treat the eye as closed below 50\% of it. The \gls{ear} also drops when a driver looks down, so it cannot be used on its own. \gls{perclos} is the fraction of time the eyes are closed within a sliding window, here 60\,s, and is a validated measure of drowsiness \cite{r69}. Figure \ref{fig:ch3-04} labels the landmarks.
+The \gls{ear} stays roughly constant while the eye is open and drops towards zero as it closes. Since eye shape varies between people, a fixed threshold does not suit every driver, so we take each driver's open-eye value from a 20\,s baseline and treat the eye as closed below 50\% of it. The \gls{ear} also drops when a driver looks down, so it cannot be used on its own. \gls{perclos} is the fraction of time the eyes are closed within a sliding window, here 60\,s, and is a validated measure of drowsiness \cite{r69}. \figref{fig:ch3-04} labels the landmarks.
 
 \begin{figure}[htbp]
   \centering
@@ -120,7 +120,7 @@ The \gls{ear} stays roughly constant while the eye is open and drops towards zer
 
 \section{Relevant standards, protocols and interfaces}
 
-The system uses common interfaces and follows the standards in Table \ref{tab:ch3-02}.
+The system uses common interfaces and follows the standards in \tabref{tab:ch3-02}.
 
 \begin{table}[htbp]
 \centering
@@ -152,4 +152,5 @@ ISO 7637-2 \cite{r59} & Transients on vehicle supply lines & Adapter must tolera
 OpenStreetMap Overpass \cite{r68} & Points of interest query & Nearest rest stop or fuel station (Desired) \\
 \hline
 \end{tabular}
+\tablesources{r60,r54,r53,r55,r58,r59,r56,r57,r68}
 \end{table}

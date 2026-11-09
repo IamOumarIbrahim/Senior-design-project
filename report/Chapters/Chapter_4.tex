@@ -1,16 +1,16 @@
-\section{What the System Must Do and Its Limits}
+\section{List of Specifications}
+\label{sec:specs}
 \subsection{System functions in plain words}
 
 A small camera watches the driver for four behaviours: yawning, covering the mouth, drinking and using a phone. The system ignores single odd frames and waits until a behaviour is held long enough to be real, then warns the driver with a light and a short voice message stating what it saw, escalating if the behaviour continues. Mirror checks remain silent. Every confirmed event is logged on the device, a display shows the current status and runs the calibration, and after the trip only event records reach a web dashboard of trends and tips, ensuring that no video ever leaves the device. In SDP~2, the system is demonstrated on a desk rig in a room, while the in-car placement remains the target for a vehicle version.
 
-\subsection{List of specifications}
-\subsubsection{Functional specifications}
+\subsection{Functional specifications}
 
-Every Required and Desired feature of Section 1.4 is a numbered, testable specification (FS-01 to FS-26 in Tables \ref{tab:req-features} and \ref{tab:desired-features}), each mapped to a test in Section 5.4. Future features are discussed in Section \ref{sec:future}.
+Every Required and Desired feature of \secref{sec:scope} is a numbered, testable specification (FS-01 to FS-26 in Tables \ref{tab:req-features} and \ref{tab:desired-features}), each mapped to a test in Section 5.4. Future features are discussed in \secref{sec:future}.
 
-\subsubsection{Performance specifications}
+\subsection{Performance specifications}
 
-Table \ref{tab:ch4-02} sets a numeric target for the running system, along with how each target is measured.
+\tabref{tab:ch4-02} sets a numeric target for the running system, along with how each target is measured.
 
 \begin{table}[htbp]
 \centering
@@ -48,9 +48,9 @@ Human response time to alert & $\le$ 1.5 s & Acted trials on the demonstration r
 \end{tabular}
 \end{table}
 
-\subsection{List of constraints}
+\section{List of Constraints}
 
-Table \ref{tab:ch4-05} lists the constraints and assumptions that shape the design, along with the specifications each one affects. The system must assist the driver without ever replacing their attention, and a vehicle cabin is harsh on electronics, with power cuts, voltage dips and \gls{uae} heat. Throughout the project, we follow the \gls{ieee} \cite{r66} and \gls{acm} \cite{r67} codes of ethics and the \gls{uae} \gls{pdpl} \cite{r56}.
+\tabref{tab:ch4-05} lists the constraints and assumptions that shape the design, along with the specifications each one affects. The system must assist the driver without ever replacing their attention, and a vehicle cabin is harsh on electronics, with power cuts, voltage dips and \gls{uae} heat. Throughout the project, we follow the \gls{ieee} \cite{r66} and \gls{acm} \cite{r67} codes of ethics and the \gls{uae} \gls{pdpl} \cite{r56}.
 
 \begin{table}[htbp]
 \centering
@@ -71,7 +71,7 @@ Security and privacy & No video out, \gls{pin} identity, authenticated \gls{tls}
 \hline
 Reliability & Power cuts, heat, vibration, glare & SQLite \gls{wal}, active cooler, blind check & FS-17, FS-21 \\
 \hline
-Power and size & 5 V / 5 A, $\le$ 25 W & Power budget with margin, compact vented case & Section \ref{sec:power} \\
+Power and size & 5 V / 5 A, $\le$ 25 W & Power budget with margin, compact vented case & \secref{sec:power} \\
 \hline
 Usability & No interaction while driving, bilingual voice & Short messages, glanceable \gls{ui}, dark mode & FS-16, FS-24 \\
 \hline
@@ -85,46 +85,14 @@ Assumption: scope & Four subjects, four classes, no head-pose model, not certifi
 \end{table}
 
 
-\section{Alternative Solutions and How We Chose}
+\section{Alternative Solutions and Selected Approach}
+\label{sec:alternatives}
 
-\subsection{Evaluation criteria and why they are ranked this way}
+Each whole-system alternative is scored against the weighted criteria of \tabref{tab:ch4-06}.
 
-We rank accuracy and false alarms first, since a system that misses events or keeps crying wolf ends up switched off \cite{r28,r10}. Table \ref{tab:ch4-06} gives each weight and how it is measured.
+\subsection{Description of each alternative}
 
-\begin{table}[htbp]
-\centering
-\caption{Evaluation criteria, weights and how each is measured}
-\label{tab:ch4-06}
-\footnotesize
-\setlength{\tabcolsep}{3pt}
-\renewcommand{\arraystretch}{1.15}
-\begin{tabular}{|p{0.230\linewidth}|p{0.380\linewidth}|p{0.090\linewidth}|p{0.210\linewidth}|}
-\hline
-\textbf{Criterion} & \textbf{Why it matters} & \textbf{Weight} & \textbf{How measured} \\
-\hline
-Accuracy and false alarms & Missed events defeat the purpose, false alarms make drivers switch the system off & 20\% & Recall and false alarms per hour \\
-\hline
-Real-time speed on the Pi & A late alert is useless, slow frames miss short cues & 18\% & \gls{fps} and latency \\
-\hline
-Privacy & Video of the driver's face is personal data & 15\% & Whether video leaves the car \\
-\hline
-Cost & 5000 \gls{aed} budget, low unit cost helps adoption & 14\% & Price in \gls{aed} \\
-\hline
-Power and heat & Continuous operation in \gls{uae} cabin heat & 12\% & Watts and temperature \\
-\hline
-Ease of installation & No special tools or wiring skills & 8\% & Parts and steps \\
-\hline
-Complexity & More parts mean more failure points & 7\% & Build effort estimate \\
-\hline
-Parts availability & Local purchase keeps the schedule & 6\% & Stock in the \gls{uae} \\
-\hline
-\end{tabular}
-\end{table}
-
-\subsection{Alternative solutions for the whole system}
-\subsubsection{Description of each alternative}
-
-Table \ref{tab:ch4-alts} describes the five whole-system alternatives.
+\tabref{tab:ch4-alts} describes the five whole-system alternatives.
 
 \begin{table}[htbp]
 \centering
@@ -151,9 +119,9 @@ E & Smartphone app & The phone's camera and processor & Overheats on a sunny das
 \end{table}
 
 
-\subsubsection{Comparison and selected approach}
+\subsection{Comparison and selected approach}
 
-Figure \ref{fig:ch4-decision} scores each alternative from 1 to 5. Alternative A achieves the highest total (3.96), narrowly ahead of C (3.93). However, C cannot detect phone use, drinking or hand-over-mouth, failing the core requirement FS-03 regardless of its score. The weak points of A are accepted, as each can be handled within SDP~2.
+\figref{fig:ch4-decision} scores each alternative from 1 to 5. Alternative A achieves the highest total (3.96), narrowly ahead of C (3.93). However, C cannot detect phone use, drinking or hand-over-mouth, failing the core requirement FS-03 regardless of its score. The weak points of A are accepted, as each can be handled within SDP~2.
 
 \begin{figure}[htbp]
   \centering
@@ -162,10 +130,10 @@ Figure \ref{fig:ch4-decision} scores each alternative from 1 to 5. Alternative A
   \label{fig:ch4-decision}
 \end{figure}
 
-\subsection{Alternatives for each major part}
-\subsubsection{Processing platform}
+\section{Alternatives for Each Major Part}
+\subsection{Processing platform}
 
-On the Pi 5 CPU alone, \gls{yolo}11n reaches only 6.79 \gls{fps} \cite{r52}, so we add the AI HAT+ to move detection onto an \gls{npu}. Table \ref{tab:ch4-08} compares the options.
+On the Pi 5 CPU alone, \gls{yolo}11n reaches only 6.79 \gls{fps} \cite{r52}, so we add the AI HAT+ to move detection onto an \gls{npu}. \tabref{tab:ch4-08} compares the options.
 
 \begin{table}[htbp]
 \centering
@@ -187,11 +155,12 @@ Jetson Orin Nano & About 900--1100 & 7--25 & $\ge$ 30 & Limited & Too costly, mo
 Raspberry Pi 4 & About 300 & 4--7 & Below 5 & Good & Too slow \\
 \hline
 \end{tabular}
+\tablesources{r52}
 \end{table}
 
-\subsubsection{Camera}
+\subsection{Camera}
 
-A \gls{usb} \gls{rgb} webcam is plug-and-play and matches the public \gls{rgb} data we pre-train on. An \gls{ir} camera performs better at night and remains a Future item (Table \ref{tab:ch4-09}).
+A \gls{usb} \gls{rgb} webcam is plug-and-play and matches the public \gls{rgb} data we pre-train on. An \gls{ir} camera performs better at night and remains a Future item (\tabref{tab:ch4-09}).
 
 \begin{table}[htbp]
 \centering
@@ -215,9 +184,9 @@ Dashcam & 1080p+ & Varies & 200+ & Closed firmware, no live stream \\
 \end{tabular}
 \end{table}
 
-\subsubsection{Detection model}
+\subsection{Detection model}
 
-\gls{yolo}11n offers the best balance of size and accuracy among models with a mature path to the Hailo \gls{npu}, with \gls{yolo}26n kept as a backup should its \gls{npu} export mature (Table \ref{tab:ch4-10}).
+\gls{yolo}11n offers the best balance of size and accuracy among models with a mature path to the Hailo \gls{npu}, with \gls{yolo}26n kept as a backup should its \gls{npu} export mature (\tabref{tab:ch4-10}).
 
 
 \begin{table}[htbp]
@@ -242,11 +211,12 @@ Dashcam & 1080p+ & Varies & 200+ & Closed firmware, no live stream \\
 \gls{yolo}26n \cite{r76} & 2.4 & 5.5 & 40.9 & 7.8 \cite{r52} & AGPL-3.0 \\
 \hline
 \end{tabular}
+\tablesources{r45,r52,r71,r76}
 \end{table}
 
-\subsubsection{Remaining components}
+\subsection{Remaining components}
 
-Table \ref{tab:ch4-parts} lists the remaining parts. A light bar paired with a voice message is preferred over a buzzer, which cannot explain itself, and over a screen, which pulls the eyes off the road \cite{r20,r22}. The PXN wheel serves as the steering wheel of the desk demonstration rig and prototypes a Future vibration alert.
+\tabref{tab:ch4-parts} lists the remaining parts. A light bar paired with a voice message is preferred over a buzzer, which cannot explain itself, and over a screen, which pulls the eyes off the road \cite{r20,r22}. The PXN wheel serves as the steering wheel of the desk demonstration rig and prototypes a Future vibration alert.
 
 \begin{table}[htbp]
 \centering
@@ -278,15 +248,15 @@ Light switch & Logic-level \gls{mosfet} (lab stock) & Relay module, BJT & Silent
 Server and maps & FastAPI, PostgreSQL and React on a free tier & Paid map \gls{api}, managed backend & Free and open source, and Overpass needs no key \cite{r68} & HTTPS with \gls{tls} 1.3 \\
 \hline
 \end{tabular}
+\tablesources{r68}
 \end{table}
 
 
-\section{The Selected Design: Technical Approach}
 
-\subsection{System overview: the big picture}
-\subsubsection{Overall block diagram}
+\section{System Overview}
+\subsection{Overall block diagram}
 
-Figure \ref{fig:ch4-03} presents the whole system. Before deployment, the model is trained, hardened with hard negatives and compiled for the \gls{npu}. During a session, frames flow from the camera through the detector and the \gls{ema} into the decision block, the only place where scores turn into alerts. After the session, only event records leave the device. The driver display acts as both an output and an input, since calibration writes the cutoffs that the decision block uses.
+\figref{fig:ch4-03} presents the whole system. Before deployment, the model is trained, hardened with hard negatives and compiled for the \gls{npu}. During a session, frames flow from the camera through the detector and the \gls{ema} into the decision block, the only place where scores turn into alerts. After the session, only event records leave the device. The driver display acts as both an output and an input, since calibration writes the cutoffs that the decision block uses.
 
 
 \begin{sidewaysfigure}
@@ -351,7 +321,7 @@ Figure \ref{fig:ch4-03} presents the whole system. Before deployment, the model 
 
 \subsection{How the system operates step by step}
 
-At power-on, the Pi checks its devices, the driver enters a \gls{pin}, and a new driver completes the 20\,s calibration of Section \ref{sec:calib} (Figure \ref{fig:ch4-11}). Each frame is then checked, cropped, scored and smoothed, and a cue is confirmed only once it stays above the cutoff for its confirmation time (Figure \ref{fig:ch4-12}). The system fails safe: a blocked view is announced, missing eyes are skipped rather than counted as open, and a power cut never corrupts the log. After the session, unsent events are uploaded over \gls{tls} whenever Wi-Fi is available.
+At power-on, the Pi checks its devices, the driver enters a \gls{pin}, and a new driver completes the 20\,s calibration of \secref{sec:calib} (\figref{fig:ch4-11}). Each frame is then checked, cropped, scored and smoothed, and a cue is confirmed only once it stays above the cutoff for its confirmation time (\figref{fig:ch4-12}). The system fails safe: a blocked view is announced, missing eyes are skipped rather than counted as open, and a power cut never corrupts the log. After the session, unsent events are uploaded over \gls{tls} whenever Wi-Fi is available.
 
 \begin{figure}[htbp]
   \centering
@@ -362,20 +332,21 @@ At power-on, the Pi checks its devices, the driver enters a \gls{pin}, and a new
 
 \begin{figure}[htbp]
   \centering
-  \resizebox{\linewidth}{!}{\input{Figures/tikz/flow_alert}}
-  \caption{Detection-and-alert loop with a worked example for one yawn at the Table \ref{tab:ch4-15} settings, drawn at 10 \glsentryshort{fps} with illustrative scores. Letters tie each step to the row that shows it}
+  \includegraphics[width=\linewidth]{Figures/v10/r2.pdf}
+  \caption[Detection-and-alert loop with a worked example for one yawn at the Table~\ref{tab:ch4-15} settings, drawn at 10 \glsentryshort{fps}. The frames are real DMD frames of one yawn; the scores and timing are illustrative]{Detection-and-alert loop with a worked example for one yawn at the Table \ref{tab:ch4-15} settings, drawn at 10 \glsentryshort{fps}. The frames are real DMD frames of one yawn \cite{r38}; the scores and timing are illustrative}
   \label{fig:ch4-12}
 \end{figure}
 
-\subsection{Hardware design in detail}
-\subsubsection{Hardware architecture and component selection}
+\section{Hardware Design}
+\label{sec:hardware}
+\subsection{Hardware architecture and component selection}
 
-The Raspberry Pi 5 (8 GB) boots from a 128 GB microSD card. The Active Cooler sits on the SoC, while the AI HAT+ stacks above it on brass standoffs and connects to the Pi through a short \gls{pcie} ribbon, with a vented metal case holding the whole stack. The camera, speakers, touch screen and wheel connect through a \gls{usb} 3.0 hub, the display additionally uses micro-\gls{hdmi}, and the light bar is switched from \gls{gpio}18. Figure \ref{fig:ch4-bench} shows the complete bench, Figure \ref{fig:ch4-edge} shows the stack layer by layer, and Table \ref{tab:ch5-09} lists every part.
+The Raspberry Pi 5 (8 GB) boots from a 128 GB microSD card. The Active Cooler sits on the SoC, while the AI HAT+ stacks above it on brass standoffs and connects to the Pi through a short \gls{pcie} ribbon, with a vented metal case holding the whole stack. The camera, speakers, touch screen and wheel connect through a \gls{usb} 3.0 hub, the display additionally uses micro-\gls{hdmi}, and the light bar is switched from \gls{gpio}18. \figref{fig:ch4-bench} shows the complete bench, \figref{fig:ch4-edge} shows the stack layer by layer, and \tabref{tab:ch5-09} lists every part.
 
-\subsubsection{Demonstration rig for SDP~2}
+\subsection{Demonstration rig for SDP~2}
 \label{sec:demo}
 
-The SDP~2 demonstration takes place in a room rather than in a car. The driver sits at a desk behind the PXN wheel, the C922 stands above the wheel at dashboard height facing the driver's face and hands, the light bar runs along the desk edge within peripheral vision, and the speakers, the 7-inch display and the edge unit sit on the desk, as arranged in Figure \ref{fig:ch4-bench}. This rig reproduces the geometry of the in-car mount while keeping power on mains, the temperature controlled and every test repeatable. Since our dataset is recorded in parked cars, the room is a new setting for the model, which we address through the per-driver calibration at the start of each demonstration and the brightness and hue augmentation of Table \ref{tab:ch4-14}.
+The SDP~2 demonstration takes place in a room rather than in a car. The driver sits at a desk behind the PXN wheel, the C922 stands above the wheel at dashboard height facing the driver's face and hands, the light bar runs along the desk edge within peripheral vision, and the speakers, the 7-inch display and the edge unit sit on the desk, as arranged in \figref{fig:ch4-bench}. This rig reproduces the geometry of the in-car mount while keeping power on mains, the temperature controlled and every test repeatable. Since our dataset is recorded in parked cars, the room is a new setting for the model, which we address through the per-driver calibration at the start of each demonstration and the brightness and hue augmentation of \tabref{tab:ch4-14}.
 
 \begin{figure}[htbp]
   \centering
@@ -391,9 +362,9 @@ The SDP~2 demonstration takes place in a room rather than in a car. The driver s
   \label{fig:ch4-edge}
 \end{figure}
 
-\subsubsection{Circuit and wiring diagram with all connections}
+\subsection{Circuit and wiring diagram with all connections}
 
-A \gls{gpio} pin cannot supply the current the light bar needs, so a logic-level N-channel \gls{mosfet} switches the ground side of the bar. \gls{gpio}18 (pin 12) drives the gate through a 220\,$\Omega$ resistor, while a 10\,k$\Omega$ pull-down keeps the bar off as the Pi boots. The bar takes 5 V from pin 2, and the source joins the common ground at pin 6. All other parts use standard \gls{usb}, micro-\gls{hdmi}, \gls{pcie} and \gls{usb}-C connectors. Figure \ref{fig:ch4-06} shows the wiring alongside its schematic.
+A \gls{gpio} pin cannot supply the current the light bar needs, so a logic-level N-channel \gls{mosfet} switches the ground side of the bar. \gls{gpio}18 (pin 12) drives the gate through a 220\,$\Omega$ resistor, while a 10\,k$\Omega$ pull-down keeps the bar off as the Pi boots. The bar takes 5 V from pin 2, and the source joins the common ground at pin 6. All other parts use standard \gls{usb}, micro-\gls{hdmi}, \gls{pcie} and \gls{usb}-C connectors. \figref{fig:ch4-06} shows the wiring alongside its schematic.
 
 \begin{figure}[htbp]
   \centering
@@ -402,10 +373,10 @@ A \gls{gpio} pin cannot supply the current the light bar needs, so a logic-level
   \label{fig:ch4-06}
 \end{figure}
 
-\subsubsection{Power chain and power budget}
+\subsection{Power chain and power budget}
 \label{sec:power}
 
-All loads share the 5.1 V, 5 A rail of the official 27 W supply, with the \gls{usb} ports sharing 1.6 A \cite{r50}. Table \ref{tab:ch4-13} estimates a typical draw of 3.25 A (16.3 W), leaving about 9 W of margin. In the worst case, with every load at its peak, the draw slightly exceeds both 5 A and the \gls{usb} limit, so we cap speaker volume and light brightness in software, powering the hub separately should bench tests confirm the issue. The demonstration rig runs from mains, while an in-car version would use a 12 V PD adapter rated for ISO 7637-2 transients \cite{r59}.
+All loads share the 5.1 V, 5 A rail of the official 27 W supply, with the \gls{usb} ports sharing 1.6 A \cite{r50}. \tabref{tab:ch4-13} estimates a typical draw of 3.25 A (16.3 W), leaving about 9 W of margin. In the worst case, with every load at its peak, the draw slightly exceeds both 5 A and the \gls{usb} limit, so we cap speaker volume and light brightness in software, powering the hub separately should bench tests confirm the issue. The demonstration rig runs from mains, while an in-car version would use a 12 V PD adapter rated for ISO 7637-2 transients \cite{r59}.
 
 \begin{table}[htbp]
 \centering
@@ -437,9 +408,9 @@ Creative Pebble V3 (\gls{usb}) & 5 V & 0.40 & 1.00 & 2.0 \\
 \end{tabular}
 \end{table}
 
-\subsubsection{Target in-car placement}
+\subsection{Target in-car placement}
 
-In a vehicle, which remains the target of the product beyond SDP~2, the camera sits on the dashboard above the steering column, capturing the face and both hands of the driver. The light bar runs along the dashboard edge within peripheral vision, the display sits by the centre vents, within reach but outside the line of sight, and the edge unit rests on the centre console, where it is shaded and ventilated. Figure \ref{fig:ch4-09} shows this placement next to a real view from one of our pilot sessions, while Section \ref{sec:pilot} explains why the camera does not go below the wheel.
+In a vehicle, which remains the target of the product beyond SDP~2, the camera sits on the dashboard above the steering column, capturing the face and both hands of the driver. The light bar runs along the dashboard edge within peripheral vision, the display sits by the centre vents, within reach but outside the line of sight, and the edge unit rests on the centre console, where it is shaded and ventilated. \figref{fig:ch4-09} shows this placement next to a real view from one of our pilot sessions, while \secref{sec:pilot} explains why the camera does not go below the wheel.
 
 \begin{figure}[htbp]
   \centering
@@ -455,10 +426,10 @@ In a vehicle, which remains the target of the product beyond SDP~2, the camera s
   \label{fig:ch4-09}
 \end{figure}
 
-\subsection{Software design in detail}
-\subsubsection{Software architecture and module hierarchy}
+\section{Software Architecture}
+\subsection{Module hierarchy}
 
-The software consists of small Python modules connected by queues (Figure \ref{fig:ch4-10}). A capture thread passes on only the latest frame, so a slow stage never builds a backlog. The detector runs in its own thread on the \gls{npu}, the filter, decision logic and alerts share the main loop, and the logger, uploader, display server and eye module run in their own threads. Each Desired feature plugs into this loop without changing it, allowing features to be added or removed one at a time.
+The software consists of small Python modules connected by queues (\figref{fig:ch4-10}). A capture thread passes on only the latest frame, so a slow stage never builds a backlog. The detector runs in its own thread on the \gls{npu}, the filter, decision logic and alerts share the main loop, and the logger, uploader, display server and eye module run in their own threads. Each Desired feature plugs into this loop without changing it, allowing features to be added or removed one at a time.
 
 \begin{figure}[htbp]
   \centering
@@ -467,11 +438,11 @@ The software consists of small Python modules connected by queues (Figure \ref{f
   \label{fig:ch4-10}
 \end{figure}
 
-\subsubsection{Training and optimising the detector}
+\subsection{Training and optimising the detector}
 
-\gls{yolo}11n is fine-tuned from its \gls{coco} weights on the subject-disjoint training split at an image size of 640, with augmentation for lighting, small rotations and horizontal flips. The validation split is used for early stopping and for choosing cutoffs, while the test split is touched only once, at the very end. Table \ref{tab:ch4-14} lists the settings.
+\gls{yolo}11n is fine-tuned from its \gls{coco} weights on the subject-disjoint training split at an image size of 640, with augmentation for lighting, small rotations and horizontal flips. The validation split is used for early stopping and for choosing cutoffs, while the test split is touched only once, at the very end. \tabref{tab:ch4-14} lists the settings.
 
-Compression follows a fixed order: fine-tune, prune in 10\% steps, fine-tune again, quantize to \gls{int} with the Hailo Dataflow Compiler, and finally benchmark on the Pi. A variant is acceptable when recall drops by no more than 2 points and \gls{map}$_{50}$ by no more than 3 points against the FP32 model, and the fastest acceptable variant is deployed (Table \ref{tab:ch4-14}).
+Compression follows a fixed order: fine-tune, prune in 10\% steps, fine-tune again, quantize to \gls{int} with the Hailo Dataflow Compiler, and finally benchmark on the Pi. A variant is acceptable when recall drops by no more than 2 points and \gls{map}$_{50}$ by no more than 3 points against the FP32 model, and the fastest acceptable variant is deployed (\tabref{tab:ch4-14}).
 
 \begin{table}[htbp]
 \centering
@@ -499,35 +470,35 @@ Selection & Acceptable & Recall drop $\le$ 2 points, \gls{map}$_{50}$ drop $\le$
 \end{tabular}
 \end{table}
 
-\subsubsection{Region-of-interest crop}
+\subsection{Region-of-interest crop}
 \label{sec:roi}
 
-Each frame is first cut to a 640$\times$640 square, from which a fixed 400$\times$400 \gls{roi} at $x \in [140, 540]$, $y \in [120, 520]$ is extracted and resized to the model input (Figure \ref{fig:ch4-roi}). Since the driver occupies a predictable region of an in-cabin view, the \gls{roi} keeps the face and hands, discards 61\% of the pixels, and enlarges small cues: at a 320-pixel input, the median yawning box grows from 35 to 55 pixels \cite{rs3}. Detections are then mapped back to the full frame. The cost falls on the edges of the frame, as drivers tend to hold a phone toward the door, so 9.3\% of test phone-use boxes in DMD leave the window \cite{rs3}. Crop tracking (Table \ref{tab:ch4-desired}) moves the window with the face to reduce this loss.
+Each frame is first cut to a 640$\times$640 square, from which a fixed 400$\times$400 \gls{roi} at $x \in [140, 540]$, $y \in [120, 520]$ is extracted and resized to the model input (\figref{fig:ch4-roi}). Since the driver occupies a predictable region of an in-cabin view, the \gls{roi} keeps the face and hands, discards 61\% of the pixels, and enlarges small cues: at a 320-pixel input, the median yawning box grows from 35 to 55 pixels \cite{rs3}. Detections are then mapped back to the full frame. The cost falls on the edges of the frame, as drivers tend to hold a phone toward the door, so 9.3\% of test phone-use boxes in DMD leave the window \cite{rs3}. Crop tracking (\tabref{tab:ch4-desired}) moves the window with the face to reduce this loss.
 
 \begin{figure}[htbp]
   \centering
   \includegraphics[width=\linewidth]{Figures/crop_roi.png}
-  \caption{Static \glsentryshort{roi} crop on a DMD frame: the phone box (ground truth in green, prediction in red) stays inside the window and gets larger (from \cite{rs3})}
+  \caption[Static \glsentryshort{roi} crop on a DMD frame: the phone box (ground truth in green, prediction in red) stays inside the window and gets larger]{Static \glsentryshort{roi} crop on a DMD frame: the phone box (ground truth in green, prediction in red) stays inside the window and gets larger (from \cite{rs3})}
   \label{fig:ch4-roi}
 \end{figure}
 
-\subsubsection{Temporal filtering with EMA}
+\subsection{Temporal filtering with EMA}
 
 Each class has its own $\tau$: 0.6\,s for yawning and hand-over-mouth, which are short and distinct, and 1.0\,s for drinking and phone use, which last longer and have more look-alikes. The filter restarts from zero after boot and after a camera-blocked period, ensuring old evidence never carries over. Since $\alpha$ is computed from the measured $\Delta t$ in Equation \ref{eq:ema}, the filter is tested by replaying the same clip at 10, 15 and 30 \gls{fps} and checking that confirmation times agree within one frame.
 
-\subsubsection{Alert decision logic: class-specific alerts, cool-down, escalation and suppression}
+\subsection{Alert decision logic: class-specific alerts, cool-down, escalation and suppression}
 \label{sec:decision}
 
-Each class has a default cutoff and, after calibration, a per-driver cutoff kept between the default and 0.85. A cue is confirmed once its smoothed score stays above the cutoff for the class confirmation time. When the cue ends, the class is muted for a 30\,s cool-down, and any cue inside the cool-down is logged as tier 0 without playing an alert. Counting from the end of the cue allows Tiers 2 and 3 to fire while a cue persists, whereas the eye-closure alarm has no cool-down, being the most dangerous case. Each class has its own light pattern and sound, always below 3 flashes per second. We designed three alarm sounds in \gls{matlab}: a gentle 1.5\,s chime for distractions, a 3\,s 350\,\gls{hz} buzz for yawning, and a 10\,s emergency alarm reserved for risky driving. Table \ref{tab:ch4-15} lists the per-class settings.
+Each class has a default cutoff and, after calibration, a per-driver cutoff kept between the default and 0.85. A cue is confirmed once its smoothed score stays above the cutoff for the class confirmation time. When the cue ends, the class is muted for a 30\,s cool-down, and any cue inside the cool-down is logged as tier 0 without playing an alert. Counting from the end of the cue allows Tiers 2 and 3 to fire while a cue persists, whereas the eye-closure alarm has no cool-down, being the most dangerous case. Each class has its own light pattern and sound, always below 3 flashes per second. We designed three alarm sounds in \gls{matlab}: a gentle 1.5\,s chime for distractions, a 3\,s 350\,\gls{hz} buzz for yawning, and a 10\,s emergency alarm reserved for risky driving. \tabref{tab:ch4-15} lists the per-class settings.
 
-Alerts escalate in three tiers while the risk persists (Figure \ref{fig:ch4-14}). Tier 1 is the class chime with a short light pulse. Tier 2 adds an explained voice prompt, after 5\,s or after three cues within 5 minutes. Tier 3 is the emergency alarm with the full light pattern, after 10\,s, or immediately when the eyes stay closed for 1.5\,s (3\,s with the head down). The \gls{perclos} warning acts as a gentle Tier 2 prompt. Every voice message names what was detected and for how long or how often, in both English and Arabic. Since a single \gls{mosfet} can flash the bar but not change its colour, the colours in Table \ref{tab:ch4-15} appear on the display instead.
+Alerts escalate in three tiers while the risk persists (\figref{fig:ch4-14}). Tier 1 is the class chime with a short light pulse. Tier 2 adds an explained voice prompt, after 5\,s or after three cues within 5 minutes. Tier 3 is the emergency alarm with the full light pattern, after 10\,s, or immediately when the eyes stay closed for 1.5\,s (3\,s with the head down). The \gls{perclos} warning acts as a gentle Tier 2 prompt. Every voice message names what was detected and for how long or how often, in both English and Arabic. Since a single \gls{mosfet} can flash the bar but not change its colour, the colours in \tabref{tab:ch4-15} appear on the display instead.
 
 Mirror checks never trigger an alert, as head orientation is not one of our classes. Suppression while reversing, at red lights or in heavy traffic requires vehicle signals, and therefore remains a Future item.
 
 \begin{figure}[htbp]
   \centering
-  \includegraphics[width=\linewidth]{Figures/uml_state.pdf}
-  \caption{Alert state machine with the three tiers, cool-down and suppression}
+  \includegraphics[width=\linewidth]{Figures/v10/r3.pdf}
+  \caption{Alert state machine with the three tiers, cool-down and the blocked-camera case. The eye-closure alarm skips the cool-down}
   \label{fig:ch4-14}
 \end{figure}
 
@@ -555,14 +526,14 @@ Eyes closed & 0.50 $\times$ \gls{ear}$_\text{open}$ and blink score $>$ 0.50 & -
 \end{tabular}
 \end{table}
 
-\subsubsection{New-driver calibration algorithm}
+\subsection{New-driver calibration algorithm}
 \label{sec:calib}
 
 During a 20\,s window, guided by prompts on the display, the driver sits normally while the detector runs at a confidence of 0.05. Since the driver performs no cue in this window, every detection within it is treated as a false alarm. For each class $c$, the cutoff becomes
 \begin{equation}
 \theta_c = \min\!\left(\max\!\left(P_{99}(\text{scores}_c) + 0.05,\; \theta_c^{\text{default}}\right),\; 0.85\right).
 \end{equation}
-We define ``many detections'' as more than 10\% of the 600 baseline frames scoring above the default cutoff in any class, indicating that the driver moved or performed a cue, in which case the defaults are kept and the driver is asked to redo the baseline. The same window also stores the driver's open-eye \gls{ear} and rest head pitch. Figure \ref{fig:ch4-15} shows two example drivers and the flow.
+We define ``many detections'' as more than 10\% of the 600 baseline frames scoring above the default cutoff in any class, indicating that the driver moved or performed a cue, in which case the defaults are kept and the driver is asked to redo the baseline. The same window also stores the driver's open-eye \gls{ear} and rest head pitch. \figref{fig:ch4-15} shows two example drivers and the flow.
 
 \begin{figure}[htbp]
 \centering
@@ -580,9 +551,9 @@ We define ``many detections'' as more than 10\% of the 600 baseline frames scori
 \label{fig:ch4-15}
 \end{figure}
 
-\subsubsection{Desired driver-facing features}
+\subsection{Desired driver-facing features}
 
-The remaining Desired features each add one small step to the loop of Figure \ref{fig:ch4-12} (Table \ref{tab:ch4-desired}). Two rules apply to all of them: missing data is never treated as good news, so frames without visible eyes are skipped, and the driver never has to touch the display while moving. Figure \ref{fig:ch4-18} shows the eye-closure logic and Figure \ref{fig:ch4-19} the display screens.
+The remaining Desired features each add one small step to the loop of \figref{fig:ch4-12} (\tabref{tab:ch4-desired}). Two rules apply to all of them: missing data is never treated as good news, so frames without visible eyes are skipped, and the driver never has to touch the display while moving. \figref{fig:ch4-18} shows the eye-closure logic and \figref{fig:ch4-19} the display screens.
 
 \begin{table}[htbp]
 \centering
@@ -608,6 +579,7 @@ Pre-trip check & Two questions before driving (hours slept, how tired), where a 
 Rest-stop suggestion & Nearest rest stop, fuel station or caf\'e from the paired phone's location (browser geolocation, no \gls{gps} module) through OpenStreetMap \cite{r68}, with the location used once and not stored & Alerts in the last 30 minutes above a threshold & FS-26 \\
 \hline
 \end{tabular}
+\tablesources{r74,r49,r68}
 \end{table}
 
 \begin{figure}[htbp]
@@ -629,10 +601,10 @@ Rest-stop suggestion & Nearest rest stop, fuel station or caf\'e from the paired
 \label{fig:ch4-19}
 \end{figure}
 
-\subsection{Logging, server and dashboard}
-\subsubsection{Power-cut-safe on-device logging}
+\section{Logging, Server and Dashboard}
+\subsection{Power-cut-safe on-device logging}
 
-Events are stored in SQLite with \gls{wal} mode and \texttt{synchronous=NORMAL}, committing each event in a single short transaction, so a power cut cannot corrupt the database, although it may lose the last commits. The schema holds driver, session, event, calibration and tip tables (Figure \ref{fig:ch4-er}), where an event row stores the time, class, confidence, duration, tier and message, along with \texttt{uploaded} and \texttt{escalated} flags. No frames are stored by default. On every boot, \texttt{PRAGMA integrity\_check} runs before a new session starts, and a failed check moves the old file aside and starts a fresh one.
+Events are stored in SQLite with \gls{wal} mode and \texttt{synchronous=NORMAL}, committing each event in a single short transaction, so a power cut cannot corrupt the database, although it may lose the last commits. The schema holds driver, session, event, calibration and tip tables (\hyperref[fig:ch4-er]{Figure~\ref*{fig:ch4-er}}), where an event row stores the time, class, confidence, duration, tier and message, along with \texttt{uploaded} and \texttt{escalated} flags. No frames are stored by default. On every boot, \texttt{PRAGMA integrity\_check} runs before a new session starts, and a failed check moves the old file aside and starts a fresh one.
 
 \begin{figure}[htbp]
   \centering
@@ -641,9 +613,9 @@ Events are stored in SQLite with \gls{wal} mode and \texttt{synchronous=NORMAL},
   \label{fig:ch4-er}
 \end{figure}
 
-\subsubsection{Session upload and server update}
+\subsection{Session upload and server update}
 
-After the session, the uploader selects unsent events and posts them as \gls{json} to the server over HTTPS with \gls{tls} 1.3, authenticated by a per-device key in a request header. Each event carries a random identifier created on the device, allowing the server to ignore duplicates when an upload is retried, and the device marks rows as uploaded only after the server confirms. Failed attempts back off for 30, 60 and 120\,s before waiting for the next session. No frames, embeddings or images are ever sent. Figure \ref{fig:ch4-20} shows the sequence.
+After the session, the uploader selects unsent events and posts them as \gls{json} to the server over HTTPS with \gls{tls} 1.3, authenticated by a per-device key in a request header. Each event carries a random identifier created on the device, allowing the server to ignore duplicates when an upload is retried, and the device marks rows as uploaded only after the server confirms. Failed attempts back off for 30, 60 and 120\,s before waiting for the next session. No frames, embeddings or images are ever sent. \figref{fig:ch4-20} shows the sequence.
 
 \begin{figure}[htbp]
   \centering
@@ -652,9 +624,9 @@ After the session, the uploader selects unsent events and posts them as \gls{jso
   \label{fig:ch4-20}
 \end{figure}
 
-\subsubsection{Web dashboard and post-trip tips}
+\subsection{Web dashboard and post-trip tips}
 
-The dashboard presents the driver's total drive time, distraction and drowsiness counts, the percentage of drive time monitored, a trend line, a breakdown by class, an activity heatmap by weekday and hour, and a timeline of the last trip. Access is limited to the driver's own account, protected by its own password, since \glspl{pin} never leave the device. Post-trip tips are rules over recurring patterns, for example ``yawning rose after 80 minutes on 4 of 7 trips: take a break around 90 minutes'', or ``phone use happened on 5 of your last 7 trips: set navigation before leaving''. Figure \ref{fig:ch4-21} shows the design.
+The dashboard presents the driver's total drive time, distraction and drowsiness counts, the percentage of drive time monitored, a trend line, a breakdown by class, an activity heatmap by weekday and hour, and a timeline of the last trip. Access is limited to the driver's own account, protected by its own password, since \glspl{pin} never leave the device. Post-trip tips are rules over recurring patterns, for example ``yawning rose after 80 minutes on 4 of 7 trips: take a break around 90 minutes'', or ``phone use happened on 5 of your last 7 trips: set navigation before leaving''. \figref{fig:ch4-21} shows the design.
 
 \begin{figure}[htbp]
   \centering
@@ -663,10 +635,10 @@ The dashboard presents the driver's total drive time, distraction and drowsiness
   \label{fig:ch4-21}
 \end{figure}
 
-\subsection{Calculations, simulations and preliminary results}
-\subsubsection{Calculations that justify the design values}
+\section{Calculations and Preliminary Results}
+\subsection{Calculations that justify the design values}
 
-Table \ref{tab:ch4-calc} gives the calculations behind the main design values.
+\tabref{tab:ch4-calc} gives the calculations behind the main design values.
 
 \begin{table}[htbp]
 \centering
@@ -685,14 +657,15 @@ Compute & 6.5 GFLOPs $\times$ 30 \gls{fps} = 195 GFLOP/s, while the Pi CPU gives
 \hline
 Storage & About 120 bytes per event, so 100 events per day add 4.4 MB per year, and an upload of 100 events is about 20 kB & The 128 GB card and Wi-Fi are far more than enough \\
 \hline
-Power & 5 V $\times$ 3.25 A = 16.3 W typical on a 25.5 W supply (Table \ref{tab:ch4-13}) & About 9 W of margin \\
+Power & 5 V $\times$ 3.25 A = 16.3 W typical on a 25.5 W supply (\tabref{tab:ch4-13}) & About 9 W of margin \\
 \hline
 \end{tabular}
+\tablesources{r52}
 \end{table}
 
 
 
-Latency is measured from frame capture to the alert command, excluding the deliberate confirmation time. Table \ref{tab:ch4-17} sets a 60 ms target against the 100 ms limit.
+Latency is measured from frame capture to the alert command, excluding the deliberate confirmation time. \tabref{tab:ch4-17} sets a 60 ms target against the 100 ms limit.
 
 \begin{table}[htbp]
 \centering
@@ -712,29 +685,29 @@ Latency is measured from frame capture to the alert command, excluding the delib
 \end{table}
 
 
-\subsubsection{Preliminary experiments}
+\subsection{Preliminary experiments}
 
-Before the SDP~2 hardware arrives, we conducted four studies on public data using a workstation with an RTX 4060 \gls{gpu}, each released as an open repository \cite{rs1,rs2,rs3,rs4}. Table \ref{tab:prelim} summarises what each study measured and the design decision it informed.
+Before the SDP~2 hardware arrives, we conducted four studies on public data using a workstation with an RTX 4060 \gls{gpu}, each released as an open repository \cite{rs1,rs2,rs3,rs4}. \tabref{tab:prelim} summarises what each study measured and the design decision it informed.
 
-\textbf{Detector choice.} On DMD with a 14-driver subject-disjoint split, \gls{yolo}11n achieved the highest \gls{map}$_{50}$ (0.918) and speed (68 \gls{fps}) of three nano detectors \cite{rs1}. Even so, its F1 ranged from 0.62 to 0.95 between test drivers. The false positive in Figure \ref{fig:ch4-qual}, a tissue held over the mouth, is precisely the kind of look-alike our hard-negative round targets.
+\textbf{Detector choice.} On DMD with a 14-driver subject-disjoint split, \gls{yolo}11n achieved the highest \gls{map}$_{50}$ (0.918) and speed (68 \gls{fps}) of three nano detectors \cite{rs1}. Even so, its F1 ranged from 0.62 to 0.95 between test drivers. The false positive in \figref{fig:ch4-qual}, a tissue held over the mouth, is precisely the kind of look-alike our hard-negative round targets.
 
 \begin{figure}[htbp]
   \centering
   \includegraphics[width=\linewidth]{Figures/rs1_yolo11n_examples.png}
-  \caption{\glsentryshort{yolo}11n on held-out DMD drivers: correct detection, false positive and missed detection (from our benchmark \cite{rs1})}
+  \caption[\glsentryshort{yolo}11n on held-out DMD drivers: correct detection, false positive and missed detection (from our benchmark)]{\glsentryshort{yolo}11n on held-out DMD drivers: correct detection, false positive and missed detection (from our benchmark \cite{rs1})}
   \label{fig:ch4-qual}
 \end{figure}
 
-Figure \ref{fig:ch4-weak} highlights two weak cells. Hand-over-mouth precision is only 0.54 due to look-alikes, and one held-out driver is detected only half of the time, which is why we mine hard negatives and always evaluate on unseen drivers.
+\figref{fig:ch4-weak} highlights two weak cells. Hand-over-mouth precision is only 0.54 due to look-alikes, and one held-out driver is detected only half of the time, which is why we mine hard negatives and always evaluate on unseen drivers.
 
 \begin{figure}[htbp]
   \centering
   \includegraphics[width=\linewidth]{Figures/heat_yolo_weak.pdf}
-  \caption{Where \glsentryshort{yolo}11n is weak: precision, recall and F1 per class and per held-out DMD driver, mean of three seeds \cite{rs1}}
+  \caption[Where \glsentryshort{yolo}11n is weak: precision, recall and F1 per class and per held-out DMD driver, mean of three seeds]{Where \glsentryshort{yolo}11n is weak: precision, recall and F1 per class and per held-out DMD driver, mean of three seeds \cite{rs1}}
   \label{fig:ch4-weak}
 \end{figure}
 
-\textbf{False alarms and cropping.} Both studies are presented in Chapter 1 (Figure \ref{fig:empirical_studies}): 40\% hard-mined negatives cut false positives by 71\% \cite{rs2}, and cropping to the driver preserves accuracy down to 320 px.
+\textbf{False alarms and cropping.} Both studies are presented in Chapter 1 (\figref{fig:empirical_studies}): 40\% hard-mined negatives cut false positives by 71\% \cite{rs2}, and cropping to the driver preserves accuracy down to 320 px.
 
 \textbf{Compression and cutoffs.} Structured pruning of up to 50\% kept the per-class AP$_{50}$ of \gls{yolo}11n within about two points (\gls{map}$_{50}$ from 0.933 to 0.928), yet at a fixed cutoff of 0.5 its worst-class recall fell by 6.8 points. Cutoffs tuned on validation drivers met a recall floor on unseen test drivers in at most one of three training seeds, and \gls{int} quantization with TensorRT lowered \gls{map}$_{50}$ from 0.933 to 0.874 \cite{rs3}.
 
@@ -763,36 +736,36 @@ Temporal filtering \cite{rs4} & RGB-thermal video & Moving average: 9.0 $\righta
 \gls{roi} cropping (Chapter 1) & Public DMS data & Crop keeps accuracy down to 320 px, $\le$ 3 ms & Fixed crop, 320 px CPU fallback \\
 \hline
 \end{tabular}
+\tablesources{rs1,rs2,rs3,rs4}
 \end{table}
 
-\subsubsection{What the results tell us}
+\subsection{What the results tell us}
 
 Together, the studies support \gls{yolo}11n, hard-negative mining and a simple time-based average. Most importantly, a cutoff tuned on some drivers does not hold for others, forming the strongest argument for per-driver calibration. The main risks are the \gls{int} accuracy drop on the \gls{npu} and how well results on public data transfer to our own recordings of the four authors.
 
-\section{Real-World Considerations}
 
-\subsection{Environmental impact}
+\section{Environmental Concerns}
 
 The device adds a small amount of e-waste in the Pi, the HAT, the camera, the hub and the display, but contains no battery to dispose of, and at about 16 W it consumes less energy than a car's headlights. Training is the largest energy cost, which we limit by fine-tuning a small pre-trained model rather than training from scratch, and by running compression only once. The server stores only small event records, keeping its energy use minimal. At the end of the project, the parts are returned to the university lab for reuse.
 
-\subsection{Ethical and social issues in the UAE context}
+\section{Ethical and Social Issues in the UAE}
 \label{sec:ethics}
-\subsubsection{Privacy}
+\subsection{Privacy}
 
-Our own dataset records only the four authors (Section \ref{sec:dataset}), so no outside participants are involved. For a product, every driver would give consent under the \gls{uae} \gls{pdpl} \cite{r56}, with \gls{gdpr} \cite{r57} as a reference, and a ``delete my data'' button on the dashboard remains a Future item.
+Our own dataset records only the four authors (\secref{sec:dataset}), so no outside participants are involved. For a product, every driver would give consent under the \gls{uae} \gls{pdpl} \cite{r56}, with \gls{gdpr} \cite{r57} as a reference, and a ``delete my data'' button on the dashboard remains a Future item.
 
-\subsubsection{Social and cultural perception in the UAE}
+\subsection{Social and cultural perception in the UAE}
 
 An in-car camera can feel intrusive, especially for families and for women who may prefer not to be filmed. Keeping all video on the device and never uploading it is our main answer, together with a visible camera that is never hidden. Fleet employees, such as taxi drivers, may fear the system being used to punish them, so our design gives the data to the driver first and shares only events, never video. Voice messages in both Arabic and English make the system feel local and clear, and since phone use costs 800 \gls{aed} and four black points in the \gls{uae} \cite{r65}, drivers have a personal reason to welcome a gentle reminder.
 
-\subsubsection{Fairness and responsible use}
+\subsection{Fairness and responsible use}
 
 Detection quality may differ for drivers with glasses, headscarves, beards or different skin tones. With only the four authors in our own dataset, we cannot measure this ourselves, so we fine-tune on the 14 drivers of DMD first and report results per driver, leaving a larger and more varied test set as a Future item. Alert fatigue is itself a safety risk, which is precisely why the cool-down, calibration and tiered alerts exist. The system is designed to assist and explain rather than punish, giving tips instead of scores, and it is never presented as a replacement for the driver's attention.
 
-\subsection{Economic analysis}
-\subsubsection{Cost to produce}
+\section{Economic Issues}
+\subsection{Cost to produce}
 
-The prototype costs 2725 \gls{aed}, of which the 250 \gls{aed} wheel serves the demonstration rig and the haptic prototype. A single unit costs about 2160 \gls{aed} without the display, and a custom board with the same \gls{npu} could bring this below 800 \gls{aed} at volume. Cloud costs stay small, as only events are uploaded (Table \ref{tab:ch4-19}).
+The prototype costs 2725 \gls{aed}, of which the 250 \gls{aed} wheel serves the demonstration rig and the haptic prototype. A single unit costs about 2160 \gls{aed} without the display, and a custom board with the same \gls{npu} could bring this below 800 \gls{aed} at volume. Cloud costs stay small, as only events are uploaded (\tabref{tab:ch4-19}).
 
 \begin{table}[htbp]
 \centering
@@ -814,9 +787,9 @@ Volume (1000+ units, custom board) & Below 800 (estimate) & About 1--2 \gls{aed}
 \end{tabular}
 \end{table}
 
-\subsubsection{What makes our product competitive}
+\subsection{What makes our product competitive}
 
-Unlike the products of Section 2.3, our device is a one-off purchase that works in any car, gives the feedback to the driver, keeps video on the device, reports false alarms per hour and calibrates per driver. In a production vehicle, each prototype part has an existing equivalent: an \gls{nir} camera in the cluster, a driver-assistance computer with an \gls{npu}, an ambient \gls{led} strip, the cabin speakers and a haptic steering wheel. Table \ref{tab:ch4-20} summarises the strengths and risks.
+Unlike the products of \secref{sec:commercial}, our device is a one-off purchase that works in any car, gives the feedback to the driver, keeps video on the device, reports false alarms per hour and calibrates per driver. In a production vehicle, each prototype part has an existing equivalent: an \gls{nir} camera in the cluster, a driver-assistance computer with an \gls{npu}, an ambient \gls{led} strip, the cabin speakers and a haptic steering wheel. \tabref{tab:ch4-20} summarises the strengths and risks.
 
 \begin{table}[htbp]
 \centering

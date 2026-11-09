@@ -3,7 +3,7 @@ Since the SDP~2 hardware has not yet arrived, we built and tested everything tha
 \section{What has been built}
 \label{sec:built}
 
-The full software of Chapter 4 now exists as one repository of 86 source files, with about 5500 lines of Python, 1300 lines of web code and one small C++ library, running from a camera or a video file through to the web dashboard. Table \ref{tab:built} lists the parts. The modules follow the class diagram of Figure \ref{fig:ch4-10}, and the detector backend is selected in one place, so the same pipeline runs on PyTorch, \gls{onnx}, NCNN or, once the AI HAT+ arrives, the Hailo runtime.
+The full software of Chapter 4 now exists as one repository of 86 source files, with about 5500 lines of Python, 1300 lines of web code and one small C++ library, running from a camera or a video file through to the web dashboard. \tabref{tab:built} lists the parts. The modules follow the class diagram of \figref{fig:ch4-10}, and the detector backend is selected in one place, so the same pipeline runs on PyTorch, \gls{onnx}, NCNN or, once the AI HAT+ arrives, the Hailo runtime.
 
 \begin{table}[htbp]
 \centering
@@ -43,9 +43,9 @@ The detector in every run below is our \gls{yolo}11n trained on DMD in the bench
 
 \section{How it was tested}
 
-Testing relied on two kinds of evidence: automated scripts that check the logic against the test plan of Section 5.4, and a replay that exercises the whole pipeline on real footage. The replay covers 648\,s of held-out DMD driver \texttt{subject\_05}. Since the DMD frames we hold are sampled at 1 \gls{fps}, each frame was repeated ten times to form a 10 \gls{fps} clip with a matching label file. This suffices to exercise the full system, although event times on this clip are only accurate to about a second.
+Testing relied on two kinds of evidence: automated scripts that check the logic against the test plan of \secref{sec:verify}, and a replay that exercises the whole pipeline on real footage. The replay covers 648\,s of held-out DMD driver \texttt{subject\_05}. Since the DMD frames we hold are sampled at 1 \gls{fps}, each frame was repeated ten times to form a 10 \gls{fps} clip with a matching label file. This suffices to exercise the full system, although event times on this clip are only accurate to about a second.
 
-All 194 automated checks pass across the eight test scripts of Table \ref{tab:checks}. These are software checks, where the light bar and audio are replaced by recording stand-ins and power cuts are simulated by killing the writing process.
+All 194 automated checks pass across the eight test scripts of \tabref{tab:checks}. These are software checks, where the light bar and audio are replaced by recording stand-ins and power cuts are simulated by killing the writing process.
 
 \begin{table}[htbp]
 \centering
@@ -79,10 +79,10 @@ Tools & Subject-disjoint folds, agreement measure, dataset helpers & 13/13 \\
 \end{tabular}
 \end{table}
 
-\section{Results so far}
+\section{Obtained Results}
 \subsection{Full pipeline replay}
 
-Figure \ref{fig:replay} and Table \ref{tab:replay} present the replay. All four phone cues were caught and escalated, with tier times landing exactly at 5\,s and 10\,s after the cutoff crossing. Two of the four drinking cues were missed, at 148\,s and 227\,s, both detector misses on short cues from a driver the model never saw, and no detector alert fell outside a labelled cue. One result points to a design issue rather than a model issue: during the last long phone call, a brief drop in detection counted as the end of the cue, so the rest of the call fell inside the 30\,s cool-down and stayed silent.
+\figref{fig:replay} and \tabref{tab:replay} present the replay. All four phone cues were caught and escalated, with tier times landing exactly at 5\,s and 10\,s after the cutoff crossing. Two of the four drinking cues were missed, at 148\,s and 227\,s, both detector misses on short cues from a driver the model never saw, and no detector alert fell outside a labelled cue. One result points to a design issue rather than a model issue: during the last long phone call, a brief drop in detection counted as the end of the cue, so the rest of the call fell inside the 30\,s cool-down and stayed silent.
 
 \begin{figure}[htbp]
 \centering
@@ -121,11 +121,11 @@ Latency, CPU, with eye module & 143.1 ms mean, 181.0 ms p95 & Pi target: $\le$ 1
 \end{tabular}
 \end{table}
 
-These numbers serve as a working check rather than an evaluation. One driver and eight cues cannot estimate recall, and 648\,s cannot estimate a false alarm rate, so the final figures will come from the leave-one-subject-out test of Section 5.4. The PC latencies also say nothing about the Pi, where detection runs on the \gls{npu}, and they overstate the work done per frame, since a replay keeps every frame and the figures include the time a frame waits in a queue. Timed directly, the detector and eye module together take about 71 ms per frame on the CPU.
+These numbers serve as a working check rather than an evaluation. One driver and eight cues cannot estimate recall, and 648\,s cannot estimate a false alarm rate, so the final figures will come from the leave-one-subject-out test of \secref{sec:verify}. The PC latencies also say nothing about the Pi, where detection runs on the \gls{npu}, and they overstate the work done per frame, since a replay keeps every frame and the figures include the time a frame waits in a queue. Timed directly, the detector and eye module together take about 71 ms per frame on the CPU.
 
 \subsection{Logging, upload, compression and other checks}
 
-Table \ref{tab:other-results} lists the other results.
+\tabref{tab:other-results} lists the other results.
 
 \begin{table}[htbp]
 \centering
@@ -159,9 +159,9 @@ Blind check & Brightness 59 to 107 and sharpness 126 to 365 on DMD frames, with 
 The first eye rule, an \gls{ear} below 75\% of the open-eye value for 1.5\,s, did not survive real footage. Across all 15{,}723 frames of the 14 alert DMD drivers, it fired about 100 times per hour against a target of 3. In a sample of 192 flagged frames, about a third showed a visible iris, during a smile, a squint or a slight downward look, while about 40\% were a real lid closure with the head looking down at the lap or the phone. From a dashboard camera, a downward look and a closed eye can appear identical in a single frame.
 
 
-The rule now has three changes, all reflected in Table \ref{tab:ch4-15}. The \gls{ear} must fall below 50\% of the open-eye value, MediaPipe's eye-blink score must also exceed 0.50, and when the head is more than 8$^\circ$ below the driver's rest pitch, the alarm waits 3\,s instead of 1.5\,s. This last step only delays the alarm and never mutes it, as a driver nodding off also has the head down. Head-down time is also excluded from \gls{perclos}, and the rest pitch is measured during calibration alongside the open-eye \gls{ear}.
+The rule now has three changes, all reflected in \tabref{tab:ch4-15}. The \gls{ear} must fall below 50\% of the open-eye value, MediaPipe's eye-blink score must also exceed 0.50, and when the head is more than 8$^\circ$ below the driver's rest pitch, the alarm waits 3\,s instead of 1.5\,s. This last step only delays the alarm and never mutes it, as a driver nodding off also has the head down. Head-down time is also excluded from \gls{perclos}, and the rest pitch is measured during calibration alongside the open-eye \gls{ear}.
 
-We tuned these values on drivers 1 to 9 and checked them on drivers 10 to 14. Figure \ref{fig:eye-rate} shows a drop of about 80\% that holds on the unseen drivers. At 1 \gls{fps} the rate can only be bounded, so the figure counts runs of two frames, which overcount, and runs of three frames, which undercount, and even the lower figure remains above the target of 3 per hour. On the replay clip, the eye alarms fell from 26 to 1.
+We tuned these values on drivers 1 to 9 and checked them on drivers 10 to 14. \figref{fig:eye-rate} shows a drop of about 80\% that holds on the unseen drivers. At 1 \gls{fps} the rate can only be bounded, so the figure counts runs of two frames, which overcount, and runs of three frames, which undercount, and even the lower figure remains above the target of 3 per hour. On the replay clip, the eye alarms fell from 26 to 1.
 
 \begin{figure}[htbp]
 \centering
@@ -174,7 +174,7 @@ How many real closures the new rule misses remains unknown, as we have no labell
 
 \subsection{Where the time goes}
 
-We timed each stage on the replay clip to estimate what a C++ rewrite would gain (Table \ref{tab:stages}). Most of the Python only coordinates native libraries, so a full rewrite would save very little, and the detector cost does not apply on the Pi, where the \gls{npu} takes over.
+We timed each stage on the replay clip to estimate what a C++ rewrite would gain (\tabref{tab:stages}). Most of the Python only coordinates native libraries, so a full rewrite would save very little, and the detector cost does not apply on the Pi, where the \gls{npu} takes over.
 
 The one every-frame cost under our control was the blind check, which therefore became a small C++ library. It takes 0.32 ms against 3.0 ms for OpenCV and reaches the same decision on all 15{,}723 DMD frames, with the OpenCV version kept as a fallback when the library is not built.
 
@@ -204,7 +204,7 @@ Video decode & 1.2 ms & OpenCV, native \\
 
 \section{Status of every specification}
 
-Table \ref{tab:fs-status} gives the state of each specification today. ``Tested'' means the software behaviour was checked on a PC, and no entry implies that the specification has passed its final test on the Pi.
+\tabref{tab:fs-status} gives the state of each specification today. ``Tested'' means the software behaviour was checked on a PC, and no entry implies that the specification has passed its final test on the Pi.
 
 {\footnotesize
 \setlength{\tabcolsep}{3pt}
@@ -231,7 +231,7 @@ FS-06 & Cool-down & Tested & T-06 passes, but see the phone-call case above \\ \
 FS-07 & Mirror checks & Needs people & T-07 needs scripted mirror checks \\ \hline
 FS-08 & Logging & Tested & Replay events stored and read back \\ \hline
 FS-09 & On-device video & Tested & Upload contains event fields only \\ \hline
-FS-10 & Dataset & Pilot done & Four unlabelled pilot sessions with three of the authors (Section \ref{sec:pilot}), the full dataset is still to be recorded \\ \hline
+FS-10 & Dataset & Pilot done & Four unlabelled pilot sessions with three of the authors (\secref{sec:pilot}), the full dataset is still to be recorded \\ \hline
 FS-11 & Pruning and quantization & Partly tested & Pruning, fine-tuning, \gls{onnx} and NCNN ran, Hailo, \gls{qat}, FP16 and \gls{int} did not \\ \hline
 FS-12 & Hard negatives & Needs data & Miner ran but found none on a small sample, so it has yet to produce output \\ \hline
 FS-13 & Baseline clips & Needs camera & Recording tool written, not run \\ \hline
@@ -241,7 +241,7 @@ FS-16 & Explained alerts & Tested & T-16 passes for every class \\ \hline
 FS-17 & Blind check & Partly tested & T-17 passes in software, limits need tuning on the C922 \\ \hline
 FS-18 & Crop tracking & Partly tested & Follows a real face, stays off until T-18 shows it beats the fixed crop \\ \hline
 FS-19 & Calibration & Tested & Formula and redo rule pass, false-alarm benefit needs our subjects \\ \hline
-FS-20 & Eye closure & Known issue & Timing passes, but false alarms are above target (Section \ref{sec:eye-results}) \\ \hline
+FS-20 & Eye closure & Known issue & Timing passes, but false alarms are above target (\secref{sec:eye-results}) \\ \hline
 FS-21 & Power-cut logging & Partly tested & 50 process kills clean, relay test still needed \\ \hline
 FS-22 & Dashboard and sync & Tested & Real \gls{tls} upload to the dashboard on SQLite, PostgreSQL and hosting not run \\ \hline
 FS-23 & Tips & Tested & Rules checked against known histories \\ \hline
@@ -252,6 +252,6 @@ FS-26 & Rest stops & Partly tested & T-26 passed on the saved list, live query n
 }
 
 
-\section{What cannot be claimed yet}
+\section{Discussion: What Cannot Be Claimed Yet}
 
-The results above show that the software works as designed on a PC, but not yet that the product meets its targets. Real \gls{fps}, latency, heat and power on the Pi are unmeasured, as is everything that needs the AI HAT+, the light bar, the speaker or the C922. Per-class recall and false alarms per hour on our own subjects require the dataset and the leave-one-subject-out test, while T-07, T-18, T-24 and all user trials require the demonstration rig of Section \ref{sec:demo}. Table \ref{tab:ch5-08} therefore stays empty until SDP~2. The four pilot sessions of Section \ref{sec:pilot} show real cabins, mounts and light, but they are neither labelled nor run through the model, so no detection result comes from them yet.
+The results above show that the software works as designed on a PC, but not yet that the product meets its targets. Real \gls{fps}, latency, heat and power on the Pi are unmeasured, as is everything that needs the AI HAT+, the light bar, the speaker or the C922. Per-class recall and false alarms per hour on our own subjects require the dataset and the leave-one-subject-out test, while T-07, T-18, T-24 and all user trials require the demonstration rig of \secref{sec:demo}. \tabref{tab:ch5-08} therefore stays empty until SDP~2. The four pilot sessions of \secref{sec:pilot} show real cabins, mounts and light, but they are neither labelled nor run through the model, so no detection result comes from them yet.

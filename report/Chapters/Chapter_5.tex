@@ -1,7 +1,7 @@
 
 \section{Design methodology: from requirements to final design}
 
-We follow an iterative engineering process: specifying numbered requirements (Section 4.1), comparing alternatives against weighted criteria (Section 4.2), then prototyping, measuring and refining. The model follows its own inner loop of collecting clips, training, evaluating on the validation split, recording hard negatives that target the errors, and retraining. Only once a model meets the targets on the Pi do we freeze it and run the test set, a single time (Figure \ref{fig:ch5-01}).
+We follow an iterative engineering process: specifying numbered requirements (\secref{sec:specs}), comparing alternatives against weighted criteria (\secref{sec:alternatives}), then prototyping, measuring and refining. The model follows its own inner loop of collecting clips, training, evaluating on the validation split, recording hard negatives that target the errors, and retraining. Only once a model meets the targets on the Pi do we freeze it and run the test set, a single time (\figref{fig:ch5-01}).
 
 \begin{figure}[htbp]
   \centering
@@ -12,7 +12,7 @@ We follow an iterative engineering process: specifying numbered requirements (Se
 
 \section{Skills, techniques, models and tools needed}
 
-Table \ref{tab:ch5-tools} lists the skills and tools the project requires, all of which are free or open source.
+\tabref{tab:ch5-tools} lists the skills and tools the project requires, all of which are free or open source.
 
 \begin{table}[htbp]
 \centering
@@ -38,6 +38,7 @@ Design & Git and GitHub, draw.io, Mermaid, TikZ, Blender, \gls{matlab} for the a
 Measurement & Multimeter, inline \gls{usb}-C power meter, infrared thermometer, phone filming at 240 \gls{fps} & Lab stock \\
 \hline
 \end{tabular}
+\tablesources{r68}
 \end{table}
 
 
@@ -45,7 +46,7 @@ Measurement & Multimeter, inline \gls{usb}-C power meter, infrared thermometer, 
 \label{sec:dataset}
 \subsection{Dataset goals and overview}
 
-The dataset must teach the detector our four classes from our own camera view, while allowing us to measure how well the model generalises to people it has never seen. Besides the four positive classes, every frame without a cue serves as a negative, with hard negatives added in a second round. Table \ref{tab:ch5-01} gives the plan.
+The dataset must teach the detector our four classes from our own camera view, while allowing us to measure how well the model generalises to people it has never seen. Besides the four positive classes, every frame without a cue serves as a negative, with hard negatives added in a second round. \tabref{tab:ch5-01} gives the plan.
 
 \begin{table}[htbp]
 \centering
@@ -74,7 +75,7 @@ Classes & Yawning, hand-over-mouth, drinking, phone use, plus negatives (includi
 \subsection{Collection protocol}
 \subsubsection{Recording setup and conditions}
 
-The camera is mounted in the target in-car position (Figure \ref{fig:ch4-09}). Each subject sits in a parked car with the engine off and records several 10-minute \gls{rgb} sessions at 1080p and 30 \gls{fps}, in the afternoon and in the evening. Following the guideline in Figure \ref{fig:ch5-guide}, the subject performs each behaviour several times at random moments, separated by periods of normal posture. Looking away is recorded deliberately and labelled as a negative, so that mirror checks teach the model what not to alert on.
+The camera is mounted in the target in-car position (\figref{fig:ch4-09}). Each subject sits in a parked car with the engine off and records several 10-minute \gls{rgb} sessions at 1080p and 30 \gls{fps}, in the afternoon and in the evening. Following the guideline in \figref{fig:ch5-guide}, the subject performs each behaviour several times at random moments, separated by periods of normal posture. Looking away is recorded deliberately and labelled as a negative, so that mirror checks teach the model what not to alert on.
 
 \begin{figure}[htbp]
 \centering
@@ -91,7 +92,7 @@ The camera is mounted in the target in-car position (Figure \ref{fig:ch4-09}). E
 \subsubsection{Pilot sessions and what they taught us}
 \label{sec:pilot}
 
-Before the C922 arrived, three of the authors (P1 to P3) recorded four pilot sessions in three cars, by day and by night, using phones in different mounts (Table \ref{tab:ch5-pilot} and Figure \ref{fig:ch5-pilot}). These clips are neither labelled nor part of the dataset, as we used them only to check the protocol and the camera mount by eye. Two of them were filmed upside down, showing that the frame grabber needs a 180$^\circ$ rotation setting.
+Before the C922 arrived, three of the authors (P1 to P3) recorded four pilot sessions in three cars, by day and by night, using phones in different mounts (\tabref{tab:ch5-pilot} and \figref{fig:ch5-pilot}). These clips are neither labelled nor part of the dataset, as we used them only to check the protocol and the camera mount by eye. Two of them were filmed upside down, showing that the frame grabber needs a 180$^\circ$ rotation setting.
 
 \begin{table}[htbp]
 \centering
@@ -125,7 +126,7 @@ C4 & P3 & Night, red and green street light & Phone below the wheel, upside down
   \label{fig:ch5-pilot}
 \end{figure}
 
-Figure \ref{fig:ch5-lessons} and Table \ref{tab:ch5-lessons} summarise what the sessions taught us, with each lesson visible in its frame. Figure \ref{fig:ch5-night} follows one drive in C4, where within 25\,s the same face turns green, red, evenly lit and dark. An \gls{rgb} camera captures all of this variation, which is why training uses hue and brightness augmentation (Table \ref{tab:ch4-14}) and why an \gls{ir} camera remains the first Future item.
+\figref{fig:ch5-lessons} and \tabref{tab:ch5-lessons} summarise what the sessions taught us, with each lesson visible in its frame. \figref{fig:ch5-night} follows one drive in C4, where within 25\,s the same face turns green, red, evenly lit and dark. An \gls{rgb} camera captures all of this variation, which is why training uses hue and brightness augmentation (\tabref{tab:ch4-14}) and why an \gls{ir} camera remains the first Future item.
 
 \begin{figure}[htbp]
   \centering
@@ -148,11 +149,11 @@ Figure \ref{fig:ch5-lessons} and Table \ref{tab:ch5-lessons} summarise what the 
 \hline
 \textbf{Frame} & \textbf{What we saw} & \textbf{What we do} \\
 \hline
-(a) & Below the wheel, the rim and the hand cross the face & Keep the dash-top mount above the column (Section 4.3.3) \\
+(a) & Below the wheel, the rim and the hand cross the face & Keep the dash-top mount above the column (\secref{sec:hardware}) \\
 \hline
 (b) & A fast head turn is blurred at 14 \gls{fps} & Record at 30 \gls{fps} with the C922, and keep the 3\,s rule so one blurred frame never reads as a blocked camera \\
 \hline
-(c) & A hand at the chin and neck, with the eyes shut and the head turned & Keep the chin row in the hard-negative list (Table \ref{tab:ch5-04}), and test the eye rule with the head turned and down (T-20) \\
+(c) & A hand at the chin and neck, with the eyes shut and the head turned & Keep the chin row in the hard-negative list (\tabref{tab:ch5-04}), and test the eye rule with the head turned and down (T-20) \\
 \hline
 (d) & Bright rear windows behind the driver in daylight, and a seatbelt across the chest & Set the camera exposure for the face, not the whole frame, and treat the seatbelt as part of a normal pose \\
 \hline
@@ -175,12 +176,12 @@ The subjects are the four authors, so no outside participants are recorded and e
 
 \subsubsection{Neutral baseline clips}
 
-Before each session, the subject sits normally for 20\,s. These clips serve two purposes: benchmarking the new-driver calibration of Section \ref{sec:calib} on people the model has not seen, and measuring each subject's open-eye \gls{ear} for the eye module.
+Before each session, the subject sits normally for 20\,s. These clips serve two purposes: benchmarking the new-driver calibration of \secref{sec:calib} on people the model has not seen, and measuring each subject's open-eye \gls{ear} for the eye module.
 
 \subsection{Labelling}
 \subsubsection{Class definitions and annotation rules}
 
-A positive must be visible for at least 0.5\,s, with the box covering the region that defines the class. Look-alikes are deliberately labelled as negatives, and head orientation is never labelled, so mirror checks and looking-away segments always remain negatives. Table \ref{tab:ch5-02} gives the rules.
+A positive must be visible for at least 0.5\,s, with the box covering the region that defines the class. Look-alikes are deliberately labelled as negatives, and head orientation is never labelled, so mirror checks and looking-away segments always remain negatives. \tabref{tab:ch5-02} gives the rules.
 
 \begin{table}[htbp]
 \centering
@@ -206,7 +207,7 @@ Phone use & Phone at the ear or held in view and looked at & Hand at the cheek, 
 
 \subsubsection{Annotation tool and quality checks}
 
-Labels are drawn in CVAT on frames sampled at 5 \gls{fps}, with interpolation between key frames to speed up long cues. For the first subject, two annotators label each video independently, measuring agreement as the share of boxes that match at an \gls{iou} of 0.5 or more and discussing disagreements to refine the rules in Table \ref{tab:ch5-02}. From then on, one annotator labels each video and the second checks a random 10\% of frames, relabelling any video where more than 5\% of the checked frames disagree.
+Labels are drawn in CVAT on frames sampled at 5 \gls{fps}, with interpolation between key frames to speed up long cues. For the first subject, two annotators label each video independently, measuring agreement as the share of boxes that match at an \gls{iou} of 0.5 or more and discussing disagreements to refine the rules in \tabref{tab:ch5-02}. From then on, one annotator labels each video and the second checks a random 10\% of frames, relabelling any video where more than 5\% of the checked frames disagree.
 
 \subsection{Subject-disjoint evaluation with four subjects}
 
@@ -214,27 +215,18 @@ With only four subjects, a fixed split would leave a single person in the test s
 \begin{equation}
 \mathcal{S}_\text{train} \cap \mathcal{S}_\text{val} = \mathcal{S}_\text{train} \cap \mathcal{S}_\text{test} = \mathcal{S}_\text{val} \cap \mathcal{S}_\text{test} = \varnothing \quad \text{in every fold.}
 \end{equation}
-Every session, baseline clip and hard-negative clip of a subject stays with that subject. Results are reported as the mean and spread over the four folds, ensuring every subject is tested exactly once by a model that never saw them. Figure \ref{fig:ch5-04} shows the folds.
+Every session, baseline clip and hard-negative clip of a subject stays with that subject. Results are reported as the mean and spread over the four folds, ensuring every subject is tested exactly once by a model that never saw them. \figref{fig:ch5-04} shows the folds.
 
 \begin{figure}[htbp]
 \centering
-\begin{tikzpicture}[font=\footnotesize]
-  \foreach \f/\te/\va in {1/1/2, 2/2/3, 3/3/4, 4/4/1} {
-    \node[anchor=east] at (-0.2,-\f*0.8) {Fold \f};
-    \foreach \s in {1,...,4} {
-      \ifnum\s=\te \def\c{sbred}\def\l{Test}\else\ifnum\s=\va \def\c{sbgold}\def\l{Val}\else\def\c{sbblue}\def\l{Train}\fi\fi
-      \node[draw=\c, line width=0.9pt, fill=\c!12, minimum width=20mm, minimum height=6mm] at (\s*2.3,-\f*0.8) {\l};
-    }
-  }
-  \foreach \s in {1,...,4} \node[font=\footnotesize\bfseries] at (\s*2.3,0) {S0\s};
-\end{tikzpicture}
-\caption{Leave-one-subject-out folds: every subject is tested once by a model that never saw them}
+\includegraphics[width=\linewidth]{Figures/v10/n3.pdf}
+\caption[From recording to labels (a), and the leave-one-subject-out folds (b): every subject is tested once by a model that never saw them. Example frames are from our recording guide, our pilot sessions and DMD]{From recording to labels (a), and the leave-one-subject-out folds (b): every subject is tested once by a model that never saw them. Example frames are from our recording guide, our pilot sessions and DMD \cite{r38}}
 \label{fig:ch5-04}
 \end{figure}
 
 \subsection{Hard-negative dataset}
 
-After the first model is trained, we run it at a low confidence on the training and validation clips and collect the frames it wrongly flags. The same subjects then record a short session deliberately acting these look-alikes (Table \ref{tab:ch5-04}). Only negative frames are added, with each subject kept in their own split, and false alarms per hour are compared before and after, using the 40\% hard-mined ratio from Chapter 1.
+After the first model is trained, we run it at a low confidence on the training and validation clips and collect the frames it wrongly flags. The same subjects then record a short session deliberately acting these look-alikes (\tabref{tab:ch5-04}). Only negative frames are added, with each subject kept in their own split, and false alarms per hour are compared before and after, using the 40\% hard-mined ratio from Chapter 1.
 
 \begin{table}[htbp]
 \centering
@@ -261,9 +253,10 @@ Phone in a dashboard holder, not held & Phone use & About 400 \\
 \end{table}
 
 \section{How We Will Prove It Works}
+\label{sec:verify}
 \subsection{What will be verified: each specification matched to a test}
 
-Every specification of Tables \ref{tab:req-features} and \ref{tab:desired-features} maps to at least one verification method: test (measured against a pass criterion), analysis (calculation or review of logs), inspection (checking the build or the code) or demonstration (showing the feature working with a user). Test T-$xx$ verifies specification FS-$xx$, and Table \ref{tab:ch5-07} lists the main feature tests.
+Every specification of Tables \ref{tab:req-features} and \ref{tab:desired-features} maps to at least one verification method: test (measured against a pass criterion), analysis (calculation or review of logs), inspection (checking the build or the code) or demonstration (showing the feature working with a user). Test T-$xx$ verifies specification FS-$xx$, and \tabref{tab:ch5-07} lists the main feature tests.
 
 \subsection{Test procedures}
 \subsubsection{Model tests on the subject-disjoint test set}
@@ -277,7 +270,7 @@ Each model variant runs on the Pi for 30 minutes on a recorded test clip in a ro
 
 \subsubsection{Feature tests}
 
-Each feature has a simple, repeatable test (Table \ref{tab:ch5-07}). Eye closure is tested on the demonstration rig of Section \ref{sec:demo}, including closures with the head down, since these were confused on the DMD footage. All feature tests run on the same rig, always with subjects whose clips were not used for training.
+Each feature has a simple, repeatable test (\tabref{tab:ch5-07}). Eye closure is tested on the demonstration rig of \secref{sec:demo}, including closures with the head down, since these were confused on the DMD footage. All feature tests run on the same rig, always with subjects whose clips were not used for training.
 
 {\footnotesize
 \setlength{\tabcolsep}{3pt}
@@ -316,7 +309,7 @@ T-22 & Secure upload & Upload to a server with a bad certificate, and drop Wi-Fi
 
 \subsection{Expected results and pass/fail criteria}
 
-Required specifications are must-pass, so a failure is fixed before any Desired feature is added. Desired specifications are aims, and a miss is reported with its cause rather than blocking the project. Table \ref{tab:ch5-08} gives the target and minimum acceptable value for the key specifications.
+Required specifications are must-pass, so a failure is fixed before any Desired feature is added. Desired specifications are aims, and a miss is reported with its cause rather than blocking the project. \tabref{tab:ch5-08} gives the target and minimum acceptable value for the key specifications.
 
 \begin{table}[htbp]
 \centering
@@ -354,10 +347,10 @@ FS-21 & 50/50 power cuts clean & 50/50 power cuts clean & Aim & \\
 \end{tabular}
 \end{table}
 
-\section{Project Plan: Parts, Budget, Timeline and Risks}
+\section{Parts List and Estimated Budget}
 \subsection{Hardware parts list}
 
-Table \ref{tab:ch5-09} lists every item in our approved purchase request, all sourced from Amazon.ae for fast delivery in the \gls{uae}, with each supplier entry linking to the product page. The \gls{mosfet} and resistors for the light-bar driver come from the department lab stock at no cost. The AI HAT+ moved from optional to Required once our compute estimate showed that the CPU alone cannot reach the target \gls{fps}, and the PXN wheel serves both the demonstration rig and the prototype of the Future steering-wheel alert.
+\tabref{tab:ch5-09} lists every item in our approved purchase request, all sourced from Amazon.ae for fast delivery in the \gls{uae}, with each supplier entry linking to the product page. The \gls{mosfet} and resistors for the light-bar driver come from the department lab stock at no cost. The AI HAT+ moved from optional to Required once our compute estimate showed that the CPU alone cannot reach the target \gls{fps}, and the PXN wheel serves both the demonstration rig and the prototype of the Future steering-wheel alert.
 
 \begin{table}[htbp]
 \centering
@@ -393,7 +386,7 @@ Table \ref{tab:ch5-09} lists every item in our approved purchase request, all so
 
 \subsection{Project budget}
 
-The department funds the approved purchase request against a cap of 5000 \gls{aed}. With a 15\% contingency for spares, a car power adapter and cables, the total comes to about 3134 \gls{aed} (Table \ref{tab:ch5-10}).
+The department funds the approved purchase request against a cap of 5000 \gls{aed}. With a 15\% contingency for spares, a car power adapter and cables, the total comes to about 3134 \gls{aed} (\tabref{tab:ch5-10}).
 
 \begin{table}[htbp]
 \centering
@@ -417,10 +410,10 @@ Contingency (15\%) & 325 & 47 & 37 & 409 \\
 \end{tabular}
 \end{table}
 
-\subsection{Timeline and resource plan for SDP2}
-\subsubsection{Milestones and Gantt chart}
+\section{Timeline and Resource Plan for SDP2}
+\subsection{Milestones and Gantt chart}
 
-Required features come first and data collection starts early, as recording, labelling and the hard-negative round form the bottleneck. The Required build is frozen by week 8, after which the Desired features follow in priority order with a buffer for the Eid al-Fitr break, testing runs in weeks 13 to 15, and the final two weeks are reserved for the report, poster and presentation (Figure \ref{fig:ch5-07}).
+Required features come first and data collection starts early, as recording, labelling and the hard-negative round form the bottleneck. The Required build is frozen by week 8, after which the Desired features follow in priority order with a buffer for the Eid al-Fitr break, testing runs in weeks 13 to 15, and the final two weeks are reserved for the report, poster and presentation (\figref{fig:ch5-07}).
 
 \begin{figure}[htbp]
 \centering
@@ -447,9 +440,9 @@ Required features come first and data collection starts early, as recording, lab
 \end{figure}
 
 
-\subsubsection{Task assignment for each team member}
+\subsection{Task assignment for each team member}
 
-Each task has one owner and one support member who can take over (Table \ref{tab:ch5-12}).
+Each task has one owner and one support member who can take over (\tabref{tab:ch5-12}).
 
 \begin{table}[htbp]
 \centering
@@ -485,9 +478,9 @@ Final report and poster & All & All & 16 May 2027 \\
 \end{tabular}
 \end{table}
 
-\subsection{Risks and backup plans}
+\section{Risks and Backup Plans}
 
-Table \ref{tab:ch5-13} lists each risk with its likelihood, impact and mitigation. The largest risks are delays in data collection and poor generalisation from only four subjects, which we address by starting early, pre-training on public data and calibrating per driver.
+\tabref{tab:ch5-13} lists each risk with its likelihood, impact and mitigation. The largest risks are delays in data collection and poor generalisation from only four subjects, which we address by starting early, pre-training on public data and calibrating per driver.
 
 \begin{table}[htbp]
 \centering
@@ -500,7 +493,7 @@ Table \ref{tab:ch5-13} lists each risk with its likelihood, impact and mitigatio
 \hline
 \textbf{ID} & \textbf{Risk} & \textbf{Likelihood} & \textbf{Impact} & \textbf{Mitigation} \\
 \hline
-R1 & Data-collection delays & Likely & High & Four pilot sessions are already recorded (Section \ref{sec:pilot}). Book slots in week 1, record two sessions per day and fall back on DMD and YawDD for missing classes \\
+R1 & Data-collection delays & Likely & High & Four pilot sessions are already recorded (\secref{sec:pilot}). Book slots in week 1, record two sessions per day and fall back on DMD and YawDD for missing classes \\
 \hline
 R2 & Poor generalisation to new subjects & Likely & High & Only four subjects: pre-train on 14 DMD drivers, leave-one-subject-out testing, per-driver calibration, hard negatives \\
 \hline

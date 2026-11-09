@@ -2,7 +2,7 @@ In this chapter, we review previous works in academic detection, research on ale
 
 \section{Academic research on driver monitoring}
 
-The majority of distraction research classifies a whole frame with a \gls{cnn}, reaching about 96\% accuracy on the AUC dataset \cite{r32,r34}. Once the test drivers are unseen, accuracy falls to about 90\% \cite{r33}, revealing how much of the earlier gain came from frames of the same person appearing in both splits. Drowsiness research mostly relies on facial landmarks such as the \gls{ear} \cite{r35,r40,r41}, or on models of fatigue over time \cite{r37}. These methods are lightweight, yet they fail exactly when a hand, a bottle or a phone hides the face. As Table \ref{tab:ch2-01} shows, most studies evaluate on drivers the model has already seen, few are deployed on embedded hardware, none reports false alarms per hour, and none calibrates its thresholds per driver.
+The majority of distraction research classifies a whole frame with a \gls{cnn}, reaching about 96\% accuracy on the AUC dataset \cite{r32,r34}. Once the test drivers are unseen, accuracy falls to about 90\% \cite{r33}, revealing how much of the earlier gain came from frames of the same person appearing in both splits. Drowsiness research mostly relies on facial landmarks such as the \gls{ear} \cite{r35,r40,r41}, or on models of fatigue over time \cite{r37}. These methods are lightweight, yet they fail exactly when a hand, a bottle or a phone hides the face. As \tabref{tab:ch2-01} shows, most studies evaluate on drivers the model has already seen, few are deployed on embedded hardware, none reports false alarms per hour, and none calibrates its thresholds per driver.
 
 
 
@@ -34,11 +34,12 @@ The majority of distraction research classifies a whole frame with a \gls{cnn}, 
 \cite{r36} & Yawning & Face and mouth detection baseline & YawDD & Detection rate & PC & Yawning only, no covered yawns or distraction \\
 \hline
 \end{tabular}
+\tablesources{r32,r34,r33,r40,r41,r37,r35,r36}
 \end{table}
 
 \section{Alert design, trust and user experience}
 
-Detection is only half of the problem, since the alert decides whether the driver keeps the system switched on. Frequent or unjustified alerts annoy drivers, eroding their trust and their willingness to respond \cite{r28,r18,r19,r10}. Explaining what the system does and why it alerted raises trust \cite{r15,r16,r13,r27}. Graded warnings outperform single-stage ones \cite{r25,r26,r17}, and while audio is the fastest modality, it can startle the driver, performing best when combined with light or haptics \cite{r20,r21,r22,r23,r24}. Table \ref{tab:ch2-ux} groups these findings with the design decision each one drives.
+Detection is only half of the problem, since the alert decides whether the driver keeps the system switched on. Frequent or unjustified alerts annoy drivers, eroding their trust and their willingness to respond \cite{r28,r18,r19,r10}. Explaining what the system does and why it alerted raises trust \cite{r15,r16,r13,r27}. Graded warnings outperform single-stage ones \cite{r25,r26,r17}, and while audio is the fastest modality, it can startle the driver, performing best when combined with light or haptics \cite{r20,r21,r22,r23,r24}. \tabref{tab:ch2-ux} groups these findings with the design decision each one drives.
 
 
 
@@ -66,11 +67,13 @@ Drowsy drivers & \cite{r29,r30} & Warnings help drowsy drivers mostly when they 
 Personalisation & \cite{r13,r14} & Adapting to the individual driver improves perceived intelligence and experience & Per-driver calibration of cutoffs \\
 \hline
 \end{tabular}
+\tablesources{r28,r18,r19,r10,r15,r16,r13,r27,r25,r26,r17,r20,r21,r22,r23,r24,r31,r29,r30,r14}
 \end{table}
 
 \section{Commercial driver monitoring systems}
+\label{sec:commercial}
 
-Factory-fitted systems such as Smart Eye \cite{r62} use a hidden \gls{nir} camera and are tuned to the \gls{eu} \gls{gsr} \cite{r11}. Fleet products such as Seeing Machines Guardian \cite{r61}, Lytx DriveCam \cite{r63} and Samsara \cite{r64} send events and video to a cloud platform, where a safety manager reviews them. These products require a subscription or a new vehicle, upload driver footage, and none of them publishes false alarms per hour or exposes a per-driver calibration to the driver (Table \ref{tab:ch2-02}).
+Factory-fitted systems such as Smart Eye \cite{r62} use a hidden \gls{nir} camera and are tuned to the \gls{eu} \gls{gsr} \cite{r11}. Fleet products such as Seeing Machines Guardian \cite{r61}, Lytx DriveCam \cite{r63} and Samsara \cite{r64} send events and video to a cloud platform, where a safety manager reviews them. These products require a subscription or a new vehicle, upload driver footage, and none of them publishes false alarms per hour or exposes a per-driver calibration to the driver (\tabref{tab:ch2-02}).
 
 
 \begin{table}[htbp]
@@ -95,12 +98,13 @@ Samsara AI dash cam \cite{r64} & Dual-facing camera & Phone use and drowsiness d
 \textbf{This project} & \gls{rgb} webcam, on-device \gls{npu} & Explained tiered alerts, calibration, event-only analytics & Only after the trip & About 2725 \gls{aed} prototype \\
 \hline
 \end{tabular}
+\tablesources{r61,r62,r63,r64}
 \end{table}
 
 \section{Public datasets and why we collect our own}
 
 
-No public dataset satisfies our needs on its own. Our four classes are spread across datasets with different camera views and label definitions, hand-over-mouth is rarely labelled as its own class, and none contains hard negatives or the sun and glare of \gls{uae} cabins (Table \ref{tab:ch2-03}). We therefore pre-train on \gls{coco} \cite{r43}, use the public datasets for the studies in Chapter 1, and collect our own subject-disjoint dataset (Section \ref{sec:dataset}).
+No public dataset satisfies our needs on its own. Our four classes are spread across datasets with different camera views and label definitions, hand-over-mouth is rarely labelled as its own class, and none contains hard negatives or the sun and glare of \gls{uae} cabins (\tabref{tab:ch2-03}). We therefore pre-train on \gls{coco} \cite{r43}, use the public datasets for the studies in Chapter 1, and collect our own subject-disjoint dataset (\secref{sec:dataset}).
 
 \begin{table}[htbp]
 \centering
@@ -124,11 +128,12 @@ DMD \cite{r38} & Distraction, drowsiness, gaze, hands & Face, body and hands, \g
 Drive\&Act \cite{r39} & Fine-grained in-cabin activities & Multiple \gls{nir} and depth views & By subject & Automated-driving activities, \gls{nir} only \\
 \hline
 \end{tabular}
+\tablesources{r42,r36,r37,r38,r39}
 \end{table}
 
 \section{Comparison of approaches and the gap this project fills}
 
-Table \ref{tab:ch2-04} groups the reviewed work into families. Landmark rules run on-device but cannot see objects, \gls{cnn} classifiers recognise objects but are heavy and rarely tested on unseen drivers, and commercial systems are robust but closed or cloud-dependent. No family satisfies all six needs in the last row, and each need maps to a feature of Section 1.4.
+\tabref{tab:ch2-04} groups the reviewed work into families. Landmark rules run on-device but cannot see objects, \gls{cnn} classifiers recognise objects but are heavy and rarely tested on unseen drivers, and commercial systems are robust but closed or cloud-dependent. No family satisfies all six needs in the last row, and each need maps to a feature of \secref{sec:scope}.
 
 
 
@@ -156,4 +161,5 @@ Cloud-based fleet \cite{r61,r63,r64} & Partly & Partly & Not public & Not public
 \textbf{This project} & \textbf{Yes} & \textbf{Yes} & \textbf{Yes} & \textbf{Yes} & \textbf{Yes} & \textbf{Yes} \\
 \hline
 \end{tabular}
+\tablesources{r35,r40,r41,r32,r34,r33,r62,r61,r63,r64}
 \end{table}

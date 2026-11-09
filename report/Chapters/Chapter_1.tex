@@ -1,4 +1,4 @@
-\section*{Problem Statement}                      
+\section{Problem Statement}                      
 In this work, we propose a plan for the design and implementation of an edge-cloud \gls{dms} with the focus on \gls{ux}. This solves a critical deployment issue which is the nuisance caused by driver safety systems. Distrust caused by alerts---whether be true or false alerts---exposes a life-threatening risk on drowsy and distracted drivers. Our design combines:
 \begin{itemize}
     \item \gls{ux} through multi-tier risk-specific explainable alerts, web dashboard analytics and multi-modal alerts.
@@ -10,7 +10,7 @@ The system is embedded onto a Raspberry Pi 5, a live camera feeds the model, pro
 \section{Motivation}
 
 
-\glspl{dms} evolved since they got introduced in 2006 \cite{r7}. Transitioning from merely alerting the driver through an \gls{ir} camera and applying breaks \cite{r8}, to tracking eye gaze and fusing it with vehicular spatial awareness \cite{r9}. Conversely, nuisance alerts and false alarms causes driver distrust in these systems, causing system neglect or circumvention \cite{r10}. The gap falls under improving the user experience in theses systems. Given the \gls{uae} context of high speed highways, and the need for private and trustworthy systems. We aim to deliver a system that is built to supplement the driver's attention and not replace it. Figure \ref{fig:1.1} shows the results of in-attentive driving, which stresses the need for these systems to be deployed at a greater rate. In 2024, \gls{eu}’s \gls{gsr} mandates that all newly registered vehicles must include a \gls{dms} \cite{r11}. To supplement this surging rate of deployment, the need for systems that allows the user to entrust them becomes apparent.  We aim to achieve this by adaptive and enhanced alerting, driving analytics and a reliable drowsiness and distraction monitoring system. 
+\glspl{dms} evolved since they got introduced in 2006 \cite{r7}. Transitioning from merely alerting the driver through an \gls{ir} camera and applying breaks \cite{r8}, to tracking eye gaze and fusing it with vehicular spatial awareness \cite{r9}. Conversely, nuisance alerts and false alarms causes driver distrust in these systems, causing system neglect or circumvention \cite{r10}. The gap falls under improving the user experience in theses systems. Given the \gls{uae} context of high speed highways, and the need for private and trustworthy systems. We aim to deliver a system that is built to supplement the driver's attention and not replace it. \figref{fig:1.1} shows the results of in-attentive driving, which stresses the need for these systems to be deployed at a greater rate. In 2024, \gls{eu}’s \gls{gsr} mandates that all newly registered vehicles must include a \gls{dms} \cite{r11}. To supplement this surging rate of deployment, the need for systems that allows the user to entrust them becomes apparent.  We aim to achieve this by adaptive and enhanced alerting, driving analytics and a reliable drowsiness and distraction monitoring system. 
 
 
 
@@ -126,16 +126,16 @@ The system is embedded onto a Raspberry Pi 5, a live camera feeds the model, pro
 \end{tikzpicture}%
 }
 \vspace{6pt}
-\caption{\small (a) Drowsy driving involvement in all crashes \cite{r3}; (b) Distracted driving involvement in all crashes \cite{ref4}; (c) Severity of drowsiness-caused crashes \cite{r5}; (d) Severity of distraction-caused crashes \cite{r6}}
+\caption[\small (a) Drowsy driving involvement in all crashes; (b) Distracted driving involvement in all crashes; (c) Severity of drowsiness-caused crashes; (d) Severity of distraction-caused crashes]{\small (a) Drowsy driving involvement in all crashes \cite{r3}; (b) Distracted driving involvement in all crashes \cite{ref4}; (c) Severity of drowsiness-caused crashes \cite{r5}; (d) Severity of distraction-caused crashes \cite{r6}}
 \label{fig:1.1}
 \end{figure*}
 
 
 
 
-\section{Limitations of Traditional Systems}
+\section{Introduction to Driver Monitoring Systems}
 
-\gls{dms} is notorious for the high rate of alerts, a study argues that frequent or overlapping alerts can negatively affect driver mental models.Furthermore, the authors stress a need for improved contextual calibration in future driver monitoring systems designs \cite{r12}. Figure \ref{fig:1.2} highlights a local survey where drivers relay the common causes of distraction. This exposes a common pitfall that traditional \gls{dms} suffers from. By only tracking the driver's face and eyes, these systems cannot detect external distractions like road signs and traffic, nor can they detect noise and mental distractions caused by passengers or car controls. Later in this report, we discuss further details on how we effectively counter the aforementioned shortcomings, using initial setup driver calibration, a user-friendly system configuration device, and context-aware alerting.
+\gls{dms} is notorious for the high rate of alerts, a study argues that frequent or overlapping alerts can negatively affect driver mental models.Furthermore, the authors stress a need for improved contextual calibration in future driver monitoring systems designs \cite{r12}. \figref{fig:1.2} highlights a local survey where drivers relay the common causes of distraction. This exposes a common pitfall that traditional \gls{dms} suffers from. By only tracking the driver's face and eyes, these systems cannot detect external distractions like road signs and traffic, nor can they detect noise and mental distractions caused by passengers or car controls. Later in this report, we discuss further details on how we effectively counter the aforementioned shortcomings, using initial setup driver calibration, a user-friendly system configuration device, and context-aware alerting.
 
 
 \begin{figure}[htbp]
@@ -224,16 +224,59 @@ The system is embedded onto a Raspberry Pi 5, a live camera feeds the model, pro
   \end{scope}
 \end{tikzpicture}%
 }
-\caption{(a-c) Local survey on driver distraction causes \cite{r2}}
+\caption[(a-c) Local survey on driver distraction causes]{(a-c) Local survey on driver distraction causes \cite{r2}}
 \label{fig:1.2}
 \end{figure}
 
 
-\section{Key Differentiators}
+\section{Design Criteria}
+\label{sec:criteria}
+
+The design alternatives in \chapref{ch:solution} are compared against the weighted criteria below.
+We rank accuracy and false alarms first, since a system that misses events or keeps crying wolf ends up switched off \cite{r28,r10}. \tabref{tab:ch4-06} gives each weight and how it is measured.
+
+\begin{table}[htbp]
+\centering
+\caption{Evaluation criteria, weights and how each is measured}
+\label{tab:ch4-06}
+\footnotesize
+\setlength{\tabcolsep}{3pt}
+\renewcommand{\arraystretch}{1.15}
+\begin{tabular}{|p{0.230\linewidth}|p{0.380\linewidth}|p{0.090\linewidth}|p{0.210\linewidth}|}
+\hline
+\textbf{Criterion} & \textbf{Why it matters} & \textbf{Weight} & \textbf{How measured} \\
+\hline
+Accuracy and false alarms & Missed events defeat the purpose, false alarms make drivers switch the system off & 20\% & Recall and false alarms per hour \\
+\hline
+Real-time speed on the Pi & A late alert is useless, slow frames miss short cues & 18\% & \gls{fps} and latency \\
+\hline
+Privacy & Video of the driver's face is personal data & 15\% & Whether video leaves the car \\
+\hline
+Cost & 5000 \gls{aed} budget, low unit cost helps adoption & 14\% & Price in \gls{aed} \\
+\hline
+Power and heat & Continuous operation in \gls{uae} cabin heat & 12\% & Watts and temperature \\
+\hline
+Ease of installation & No special tools or wiring skills & 8\% & Parts and steps \\
+\hline
+Complexity & More parts mean more failure points & 7\% & Build effort estimate \\
+\hline
+Parts availability & Local purchase keeps the schedule & 6\% & Stock in the \gls{uae} \\
+\hline
+\end{tabular}
+\end{table}
+
+\section{Our Design}
 
 
 
-Our solution has several clear differentiators from previously deployed systems. The overall system is built on a lightweight \gls{yolo} object detector that is further pruned and quantized to run at a streamlined latency with high \gls{fps} throughput. The model is initially pre-trained via \gls{coco}. Then, fine-tuned via our own subject-disjoint in-cabin \gls{rgb} video dataset, which involves ranging lighting conditions to train a model where it is most critical. Later, we extend the dataset to include harder negatives to help reduce false alarms. We pair this detection model with a casual temporal filter to reduce random detection spikes and improve user experience via escalating alarms based on risk assessment. The system extends these with a privacy-first logging system where only event records are transmitted via \gls{tls} to a server database where a web dashboard relays driving analytics, giving feedback via tips and behavior trends to the driver after the session. A driver-facing easy-to-navigate tablet allows for system calibration and initial setup. We pair traditional alerts with intelligent voice messages in English and Arabic for further transparency and rest-stop location suggestions via a \gls{gps}.
+Our solution has several clear differentiators from previously deployed systems. The overall system is built on a lightweight \gls{yolo} object detector that is further pruned and quantized to run at a streamlined latency with high \gls{fps} throughput. The model is initially pre-trained via \gls{coco}. Then, fine-tuned via our own subject-disjoint in-cabin \gls{rgb} video dataset, which involves ranging lighting conditions to train a model where it is most critical. Later, we extend the dataset to include harder negatives to help reduce false alarms. We pair this detection model with a casual temporal filter to reduce random detection spikes and improve user experience via escalating alarms based on risk assessment. The system extends these with a privacy-first logging system where only event records are transmitted via \gls{tls} to a server database where a web dashboard relays driving analytics, giving feedback via tips and behavior trends to the driver after the session. A driver-facing easy-to-navigate tablet allows for system calibration and initial setup. We pair traditional alerts with intelligent voice messages in English and Arabic for further transparency and rest-stop location suggestions via a \gls{gps}. \figref{fig:ch1-glance} shows the whole product in one view.
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=\linewidth]{Figures/v10/n1.pdf}
+  \caption[DriveSafe at a glance: what the camera sees, what the system detects and how it responds in the car, and what leaves the car after the trip (cabin: Blender render; view: our pilot session; cues: DMD frames)]{DriveSafe at a glance: what the camera sees, what the system detects and how it responds in the car, and what leaves the car after the trip (cabin: Blender render; view: our pilot session; cues: DMD frames \cite{r38})}
+  \label{fig:ch1-glance}
+\end{figure}
 
 Aside from these differentiators, the team initially conducted research via empirical methods to evaluate several object detection models, and the effect of hard-negative mining on false alarms. We later conducted ablation studies on temporal filters and the effect of ranging input resolution and \gls{roi} cropping on input video streams, which led to most of our design choices in this report to be backed by real evaluations.
 
@@ -264,6 +307,7 @@ We aim to provide this trustworthy solution to everyone. Primarily, our solution
 
 
 \section{Scope and Feature Priorities}
+\label{sec:scope}
 
 
 Features are grouped by priority, "Required" features that deliver the base build, "Desired" features that will be delivered depending on the remaining time budget, and "Future" features that are out of scope of our \gls{sdp} 2. In the following sections we list the breakdown in detail.
